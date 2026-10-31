@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Adaptive Timetable Optimization Framework</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-logo">
+        <svg class="logo-icon" viewBox="0 0 40 40" width="40" height="40" fill="none">
+          <circle cx="20" cy="20" r="18" stroke="#60a5fa" stroke-width="2"/>
+          <circle cx="20" cy="20" r="6"  fill="#60a5fa"/>
+          <line x1="20" y1="2"  x2="20" y2="10" stroke="#60a5fa" stroke-width="2"/>
+          <line x1="20" y1="30" x2="20" y2="38" stroke="#60a5fa" stroke-width="2"/>
+          <line x1="2"  y1="20" x2="10" y2="20" stroke="#60a5fa" stroke-width="2"/>
+          <line x1="30" y1="20" x2="38" y2="20" stroke="#60a5fa" stroke-width="2"/>
+          <line x1="7"  y1="7"  x2="13" y2="13" stroke="#60a5fa" stroke-width="1.5"/>
+          <line x1="27" y1="27" x2="33" y2="33" stroke="#60a5fa" stroke-width="1.5"/>
+          <line x1="33" y1="7"  x2="27" y2="13" stroke="#60a5fa" stroke-width="1.5"/>
+          <line x1="7"  y1="33" x2="13" y2="27" stroke="#60a5fa" stroke-width="1.5"/>
+        </svg>
+        <div class="header-title-group">
+          <h1 class="header-title">Adaptive Graph-Based Timetable Optimization</h1>
+          <p class="header-subtitle">Recovery Framework &mdash; DAA Project</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-warning" onclick="window.simulateDisruption && window.simulateDisruption()">
+          ⚡ Simulate Disruption
+        </button>
+        <button class="btn btn-primary" onclick="window.loadData && window.loadData()">
+          ↺ Reload Data
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAV TABS -->
+  <nav class="tab-nav" role="tablist">
+    <button class="tab-btn active" role="tab" data-tab="timetable"    onclick="window.switchTab('timetable')">
+      🗓 Timetable
+    </button>
+    <button class="tab-btn" role="tab" data-tab="fragility"   onclick="window.switchTab('fragility')">
+      📊 Fragility
+    </button>
+    <button class="tab-btn" role="tab" data-tab="graph"       onclick="window.switchTab('graph')">
+      🕸 Conflict Graph
+    </button>
+    <button class="tab-btn" role="tab" data-tab="flow"        onclick="window.switchTab('flow')">
+      🌊 Flow Network
+    </button>
+    <button class="tab-btn" role="tab" data-tab="algorithms"  onclick="window.switchTab('algorithms')">
+      🧮 Algorithms
+    </button>
+    <button class="tab-btn" role="tab" data-tab="recovery"    onclick="window.switchTab('recovery')">
+      🔄 Recovery
+    </button>
+  </nav>
+
+  <!-- STATS BAR -->
+  <section class="stats-bar" id="stats-bar">
+    <div class="stat-card">
+      <span class="stat-value" id="stat-classes">—</span>
+      <span class="stat-label">Classes</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value" id="stat-rooms">—</span>
+      <span class="stat-label">Rooms</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value" id="stat-teachers">—</span>
+      <span class="stat-label">Teachers</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value" id="stat-slots">—</span>
+      <span class="stat-label">Time Slots</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value stat-fragile" id="stat-fragile">—</span>
+      <span class="stat-label">Fragile</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value stat-hfragile" id="stat-hfragile">—</span>
+      <span class="stat-label">Highly Fragile</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value stat-changed" id="stat-changed">—</span>
+      <span class="stat-label">Changed</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value stat-colors" id="stat-colors">—</span>
+      <span class="stat-label">Colors Used</span>
+    </div>
+  </section>
+
+  <!-- LOADING STATE -->
+  <div id="loading-overlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Loading timetable data…</p>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div id="error-banner" class="error-banner hidden">
+    <span id="error-message">Failed to load data.</span>
+    <button class="btn btn-primary" onclick="window.loadData()">Retry</button>
+  </div>
+
+  <!-- TAB CONTENT SECTIONS -->
+  <main class="tab-contents">
+
+    <!-- TIMETABLE TAB -->
+    <section id="tab-timetable" class="tab-content active" role="tabpanel">
+      <div class="section-header">
+        <h2>Weekly Timetable Grid</h2>
+        <p class="section-desc">
+          Graph-colored schedule using greedy coloring + backtracking.
+          Each color represents a conflict-free time slot group.
+        </p>
+      </div>
+      <div class="timetable-legend" id="timetable-legend"></div>
+      <div class="timetable-scroll-wrap">
+        <div id="timetable-grid" class="timetable-grid"></div>
+      </div>
+    </section>
+
+    <!-- FRAGILITY TAB -->
+    <section id="tab-fragility" class="tab-content" role="tabpanel">
+      <div class="section-header">
+        <h2>Fragility Analysis</h2>
+        <p class="section-desc">
+          Fragility = number of alternative (slot, room) pairs available for each class.
+          Lower fragility = higher scheduling risk.
+        </p>
+      </div>
+      <div id="fragility-summary" class="fragility-summary"></div>
+      <div class="table-wrap">
+        <table id="fragility-table" class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Subject</th>
+              <th>Group</th>
+              <th>Teacher</th>
+              <th>Slot</th>
+              <th>Room</th>
+              <th>Alternatives</th>
+              <th>Status</th>
+              <th>Risk</th>
+            </tr>
+          </thead>
+          <tbody id="fragility-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CONFLICT GRAPH TAB -->
+    <section id="tab-graph" class="tab-content" role="tabpanel">
+      <div class="section-header">
+        <h2>Conflict Graph</h2>
+        <p class="section-desc">
+          Welsh-Powell graph coloring. Nodes = classes; edges = scheduling conflicts
+          (same teacher/room/group). Node color = assigned slot color.
+        </p>
+      </div>
+      <div class="graph-container">
+        <canvas id="graphCanvas" class="graph-canvas"></canvas>
+        <div id="graph-legend" class="graph-legend"></div>
+      </div>
+      <p id="graph-hover-hint" class="hint-text">Hover over a node to highlight its conflicts.</p>
+    </section>
+
+    <!-- FLOW NETWORK TAB -->
+    <section id="tab-flow" class="tab-content" role="tabpanel">
+      <div class="section-header">
+        <h2>Max-Flow / Bipartite Matching Network</h2>
+        <p class="section-desc">
+          Edmonds-Karp algorithm (BFS-augmented Ford-Fulkerson) finds maximum matching
+          of affected classes to available (slot, room) pairs.
+        </p>
+      </div>
+      <div id="flow-diagram" class="flow-diagram"></div>
+      <div class="flow-legend">
+        <span class="flow-edge-demo flow-matched"></span> Matched (flow = 1) &nbsp;
+        <span class="flow-edge-demo flow-unmatched"></span> Unmatched &nbsp;
+        <span class="flow-edge-demo flow-source"></span> Source / Sink edges
+      </div>
+      <p class="complexity-note" id="flow-complexity"></p>
+    </section>
+
+    <!-- ALGORITHMS TAB -->
+    <section id="tab-algorithms" class="tab-content" role="tabpanel">
+      <div class="section-header">
+        <h2>Algorithms &amp; Complexity</h2>
+        <p class="section-desc">
+          Every algorithm employed in the framework, with complexity analysis
+          and illustrative pseudocode.
+        </p>
+      </div>
+      <div id="algo-grid" class="algo-grid"></div>
+    </section>
+
+    <!-- RECOVERY TAB -->
+    <section id="tab-recovery" class="tab-content" role="tabpanel">
+      <div class="section-header">
+        <h2>Recovery &amp; Disruption Handling</h2>
+        <p class="section-desc">
+          BFS identifies affected classes; Max-Flow reassigns them.
+          Simulate a disruption above to see the framework in action.
+        </p>
+      </div>
+      <div id="recovery-banner" class="recovery-banner"></div>
+      <div id="recovery-pipeline" class="recovery-pipeline"></div>
+      <div id="recovery-stats-row" class="recovery-stats-row"></div>
+      <div class="recovery-grid">
+        <div>
+          <h3 class="sub-heading">Change Log</h3>
+          <div id="recovery-log" class="recovery-log"></div>
+        </div>
+        <div>
+          <h3 class="sub-heading">Reassignment Table</h3>
+          <div class="table-wrap">
+            <table class="data-table" id="recovery-table">
+              <thead>
+                <tr>
+                  <th>Class ID</th>
+                  <th>Subject</th>
+                  <th>New Slot</th>
+                  <th>New Room</th>
+                </tr>
+              </thead>
+              <tbody id="recovery-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- TOOLTIP -->
+  <div id="tooltip" class="tooltip hidden" role="tooltip"></div>
+
+  <!-- SCRIPTS -->
+  <script src="js/app.js"></script>
+  <script src="js/timetable.js"></script>
+  <script src="js/fragility.js"></script>
+  <script src="js/graph.js"></script>
+  <script src="js/flow.js"></script>
+  <script src="js/algorithms.js"></script>
+  <script src="js/recovery.js"></script>
+</body>
+</html>

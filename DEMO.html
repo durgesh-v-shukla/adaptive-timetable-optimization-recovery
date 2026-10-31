@@ -1,0 +1,2604 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Adaptive Timetable Optimization &amp; Recovery Framework</title>
+<style>
+/* ================================================================
+   style.css — Professional White + Lime-Green Theme
+   Adaptive Timetable Optimization Framework
+   ================================================================ */
+
+/* ── Variables ──────────────────────────────────────────────── */
+:root {
+  --bg:          #f8faf5;
+  --surface:     #ffffff;
+  --surface-2:   #f3f7ee;
+  --border:      #dce8cc;
+  --border-soft: #eaf2de;
+
+  --accent:        #65a30d;
+  --accent-light:  #ecfccb;
+  --accent-dark:   #3f6212;
+  --accent-hover:  #84cc16;
+  --accent-muted:  #d9f99d;
+
+  --yellow:        #ca8a04;
+  --yellow-light:  #fefce8;
+  --yellow-muted:  #fde68a;
+
+  --red:           #dc2626;
+  --red-light:     #fee2e2;
+  --red-muted:     #fca5a5;
+
+  --green:         #16a34a;
+  --green-light:   #dcfce7;
+
+  --text-primary:   #1a2e05;
+  --text-secondary: #3d5a08;
+  --text-muted:     #6b7280;
+  --text-subtle:    #9ca3af;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow:    0 4px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.05);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,.08), 0 4px 8px rgba(0,0,0,.04);
+
+  --radius-sm: 6px;
+  --radius:    10px;
+  --radius-lg: 14px;
+
+  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Consolas', 'Courier New', monospace;
+}
+
+/* ── Reset ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── Typography ─────────────────────────────────────────────── */
+h1, h2, h3, h4 { font-weight: 700; line-height: 1.3; color: var(--text-primary); }
+h2 { font-size: 1.2rem; }
+h3 { font-size: 1rem; }
+h4 { font-size: .9rem; }
+p  { color: var(--text-secondary); font-size: .875rem; }
+code {
+  font-family: var(--font-mono);
+  font-size: .82rem;
+  background: var(--accent-light);
+  color: var(--accent-dark);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* ── App Header ─────────────────────────────────────────────── */
+.app-header {
+  background: var(--surface);
+  border-bottom: 2px solid var(--accent-light);
+  padding: 0 28px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.header-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  gap: 16px;
+}
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.logo-icon path, .logo-icon circle, .logo-icon line {
+  stroke: var(--accent);
+}
+.header-title-group { display: flex; flex-direction: column; gap: 1px; }
+.header-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent-dark);
+  letter-spacing: -.01em;
+}
+.header-subtitle {
+  font-size: .72rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+.header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+/* ── Buttons ─────────────────────────────────────────────────  */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: .8rem;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: background .15s, transform .1s, box-shadow .15s;
+  white-space: nowrap;
+}
+.btn:active { transform: scale(.97); }
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--accent-dark); box-shadow: var(--shadow-sm); }
+.btn-success {
+  background: var(--green-light);
+  color: var(--green);
+  border: 1px solid #bbf7d0;
+}
+.btn-success:hover { background: #bbf7d0; }
+.btn-warning {
+  background: var(--yellow-light);
+  color: var(--yellow);
+  border: 1px solid var(--yellow-muted);
+}
+.btn-warning:hover { background: var(--yellow-muted); }
+
+/* ── Tab Navigation ─────────────────────────────────────────── */
+.tab-nav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 0;
+  padding: 0 28px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+  padding: 14px 18px;
+  border: none;
+  border-bottom: 3px solid transparent;
+  background: none;
+  font-family: var(--font);
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+  white-space: nowrap;
+  margin-bottom: -1px;
+}
+.tab-btn:hover { color: var(--accent); }
+.tab-btn.active {
+  color: var(--accent-dark);
+  border-bottom-color: var(--accent);
+}
+
+/* ── Stats Bar ──────────────────────────────────────────────── */
+.stats-bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-soft);
+  padding: 0 28px;
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.stats-bar::-webkit-scrollbar { display: none; }
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 20px;
+  border-right: 1px solid var(--border-soft);
+  min-width: 90px;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+.stat-card:hover { background: var(--surface-2); }
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--accent-dark);
+  line-height: 1;
+}
+.stat-value.stat-fragile  { color: var(--yellow); }
+.stat-value.stat-hfragile { color: var(--red); }
+.stat-value.stat-changed  { color: var(--accent); }
+.stat-value.stat-colors   { color: var(--text-secondary); }
+.stat-label {
+  font-size: .65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* ── Main Content ───────────────────────────────────────────── */
+.tab-contents {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 24px 28px;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn .2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* ── Section Header ─────────────────────────────────────────── */
+.section-header {
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.section-header h2 {
+  font-size: 1.15rem;
+  color: var(--accent-dark);
+}
+.section-desc {
+  margin-top: 4px;
+  font-size: .8rem;
+  color: var(--text-muted);
+}
+
+/* ── Cards ──────────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.card-title {
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--accent-dark);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Loading & Error ────────────────────────────────────────── */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255,255,255,.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  gap: 12px;
+}
+.loading-overlay.hidden { display: none; }
+.loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--accent-light);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: .85rem; color: var(--text-muted); font-weight: 500; }
+.error-banner {
+  background: var(--red-light);
+  border: 1px solid var(--red-muted);
+  color: var(--red);
+  padding: 12px 20px;
+  font-size: .85rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: var(--radius);
+  margin: 12px 28px;
+}
+.error-banner.hidden { display: none; }
+
+/* ── Timetable ──────────────────────────────────────────────── */
+.timetable-scroll-wrap { overflow-x: auto; border-radius: var(--radius); }
+.timetable-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .73rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.legend-color-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.legend-chip {
+  display: inline-block;
+  width: 22px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.legend-chip.lc-regular   { background: var(--accent-muted); }
+.legend-chip.lc-lab       { background: #bbf7d0; }
+.legend-chip.lc-changed   { background: #fde68a; border: 1px solid var(--yellow); }
+.legend-chip.lc-fragile   { border: 2px solid var(--yellow); background: #fef9c3; }
+.legend-chip.lc-hfragile  { border: 2px solid var(--red); background: var(--red-light); }
+
+/* Timetable grid as CSS grid */
+.timetable-grid { min-width: 700px; }
+.tt-header-row, .tt-row {
+  display: grid;
+  grid-template-columns: 70px repeat(5, 1fr);
+  border-bottom: 1px solid var(--border-soft);
+}
+.tt-header-row { background: var(--surface-2); }
+.tt-header-cell {
+  padding: 10px 8px;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--accent-dark);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  border-right: 1px solid var(--border-soft);
+}
+.tt-time-cell {
+  padding: 8px 6px;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  text-align: center;
+  background: var(--surface-2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tt-cell {
+  padding: 5px 6px;
+  border-right: 1px solid var(--border-soft);
+  min-height: 58px;
+  vertical-align: top;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--surface);
+}
+.tt-cell:hover { background: var(--surface-2); }
+.tt-chips { display: flex; flex-direction: column; gap: 3px; }
+
+/* Class chips */
+.chip {
+  border-radius: var(--radius-sm);
+  padding: 4px 7px;
+  font-size: .72rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform .1s, box-shadow .1s;
+  line-height: 1.35;
+  background: var(--accent-light);
+  border-color: var(--accent-muted);
+  color: var(--accent-dark);
+}
+.chip:hover { transform: scale(1.03); box-shadow: var(--shadow-sm); }
+.chip-subject  { font-weight: 700; font-size: .73rem; }
+.chip-teacher  { font-size: .68rem; color: var(--text-muted); }
+.chip-room     { font-size: .68rem; color: var(--text-muted); }
+.chip-group    {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-size: .6rem;
+  font-weight: 700;
+  padding: 0 4px;
+  border-radius: 3px;
+  margin-left: 3px;
+}
+
+.chip-regular  { background: var(--accent-light);  border-color: #bef264; }
+.chip-lab      { background: var(--green-light);    border-color: #86efac; color: #166534; }
+.chip-changed  {
+  background: var(--yellow-light);
+  border-color: var(--yellow-muted);
+  color: #92400e;
+  animation: highlightPulse 2s ease-in-out 2;
+}
+.chip-fragile       { border-color: var(--yellow) !important; box-shadow: 0 0 0 1px #fde68a; }
+.chip-highly-fragile{ border-color: var(--red)    !important; box-shadow: 0 0 0 1px #fca5a5; background: #fff7f7; }
+
+@keyframes highlightPulse {
+  0%,100% { box-shadow: 0 0 0 0 transparent; }
+  50%      { box-shadow: 0 0 0 3px #fde68a; }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  color: var(--text-subtle);
+}
+.empty-state-icon { font-size: 2rem; margin-bottom: 8px; }
+.empty-state-msg  { font-size: .85rem; }
+
+/* ── Tables ─────────────────────────────────────────────────── */
+.table-wrap { overflow-x: auto; border-radius: var(--radius); }
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .8rem;
+}
+.data-table th {
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+.data-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: middle;
+  color: var(--text-secondary);
+}
+.data-table tbody tr:hover td { background: var(--surface-2); }
+.data-table tr:last-child td  { border-bottom: none; }
+
+/* ── Badges ─────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: .7rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.badge-stable        { background: var(--accent-light); color: var(--accent-dark); }
+.badge-fragile       { background: var(--yellow-light); color: #92400e; }
+.badge-highly-fragile{ background: var(--red-light);    color: #991b1b; }
+
+/* ── Risk Bar ───────────────────────────────────────────────── */
+.risk-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  width: 100%;
+  margin-bottom: 2px;
+}
+.risk-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width .4s ease;
+}
+
+/* ── Fragility Summary ──────────────────────────────────────── */
+.fragility-summary {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.frag-summary-card {
+  flex: 1;
+  min-width: 130px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+.frag-summary-card .fsv {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.frag-summary-card .fsl {
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+/* ── Conflict Graph ─────────────────────────────────────────── */
+.graph-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.graph-canvas {
+  display: block;
+  width: 100%;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  border: 1px solid var(--border-soft);
+}
+.graph-legend {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.graph-legend h4 {
+  width: 100%;
+  font-size: .72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.graph-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .72rem;
+  color: var(--text-secondary);
+}
+.hint-text {
+  font-size: .75rem;
+  color: var(--text-subtle);
+  margin-top: 8px;
+  font-style: italic;
+}
+
+/* ── Flow Diagram ───────────────────────────────────────────── */
+.flow-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+}
+.flow-diagram svg { display: block; margin: 0 auto; }
+.flow-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  font-size: .75rem;
+  color: var(--text-muted);
+  align-items: center;
+}
+.flow-edge-demo {
+  display: inline-block;
+  width: 28px;
+  height: 3px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+.flow-matched    { background: var(--accent); }
+.flow-unmatched  { background: var(--border); }
+.flow-source     { background: var(--yellow); }
+.flow-node-source, .flow-node-sink { fill: var(--accent-dark) !important; }
+.flow-node-class { fill: var(--accent-light) !important; }
+.flow-node-slot  { fill: var(--green-light)  !important; }
+.flow-node-label { font-family: var(--font); font-size: 11px; fill: var(--text-primary); }
+.flow-label      { font-family: var(--font); font-size: 9px; fill: var(--text-muted); }
+.flow-title      { font-family: var(--font); font-size: 12px; font-weight: 600; fill: var(--accent-dark); }
+.flow-edge-matched-line   { stroke: var(--accent); stroke-width: 2; }
+.flow-edge-unmatched-line { stroke: var(--border); stroke-width: 1; stroke-dasharray: 4 3; }
+.flow-edge-source-line    { stroke: var(--yellow); stroke-width: 1.5; }
+.complexity-note {
+  font-size: .75rem;
+  color: var(--text-muted);
+  margin-top: 10px;
+  font-style: italic;
+}
+
+/* ── Algorithm Cards ────────────────────────────────────────── */
+.algo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+.algo-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .15s, transform .15s;
+}
+.algo-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+.algo-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.algo-card-title { flex: 1; }
+.algo-card-title h3 { font-size: .9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
+.algo-icon { font-size: 1.4rem; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+.algo-tag {
+  display: inline-block;
+  font-size: .65rem;
+  font-weight: 700;
+  color: var(--accent-dark);
+  background: var(--accent-light);
+  padding: 1px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.algo-desc {
+  font-size: .78rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 10px;
+}
+.algo-pseudo {
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  margin-bottom: 10px;
+}
+.algo-pseudo-line {
+  font-family: var(--font-mono);
+  font-size: .73rem;
+  color: var(--accent-dark);
+  line-height: 1.65;
+  white-space: pre;
+}
+.algo-complexity { display: flex; gap: 6px; flex-wrap: wrap; }
+.complexity-badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-family: var(--font-mono);
+}
+
+/* ── Recovery Panel ─────────────────────────────────────────── */
+.recovery-banner {
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: .85rem;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+.recovery-banner.success {
+  background: var(--green-light);
+  color: #166534;
+  border: 1px solid #86efac;
+}
+.recovery-banner.failure {
+  background: var(--yellow-light);
+  color: #92400e;
+  border: 1px solid var(--yellow-muted);
+}
+.recovery-pipeline {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.pipeline-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pipeline-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 80px;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  flex-shrink: 0;
+  transition: all .15s;
+}
+.pipeline-node .pn-icon  { font-size: 1.3rem; }
+.pipeline-node .pn-label { font-size: .72rem; font-weight: 700; color: var(--text-primary); margin-top: 3px; }
+.pipeline-node .pn-sub   { font-size: .62rem; color: var(--text-muted); font-family: var(--font-mono); }
+.pipeline-node.pn-active  { border-color: var(--accent); background: var(--accent-light); }
+.pipeline-node.pn-success { border-color: var(--green);  background: var(--green-light); }
+.pipeline-arrow {
+  font-size: 1rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  font-weight: 700;
+}
+.recovery-stats-row { margin-bottom: 16px; }
+.recovery-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 700px) { .recovery-grid { grid-template-columns: 1fr; } }
+.sub-heading {
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.recovery-log {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-family: var(--font-mono);
+  font-size: .75rem;
+  color: var(--accent-dark);
+  white-space: pre-wrap;
+  max-height: 280px;
+  overflow-y: auto;
+  line-height: 1.65;
+}
+.recovery-stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  flex: 1;
+  min-width: 90px;
+}
+.recovery-stat-card .rsv {
+  font-size: 1.7rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+.recovery-stat-card .rsl {
+  font-size: .68rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-weight: 600;
+}
+
+/* ── Tooltip ─────────────────────────────────────────────────── */
+.tooltip {
+  position: fixed;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 13px;
+  font-size: .78rem;
+  pointer-events: none;
+  z-index: 9999;
+  max-width: 230px;
+  box-shadow: var(--shadow-lg);
+  min-width: 170px;
+}
+.tooltip.hidden { display: none; }
+.tooltip-title {
+  font-weight: 700;
+  font-size: .82rem;
+  color: var(--accent-dark);
+  margin-bottom: 7px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 3px;
+  align-items: baseline;
+}
+.tooltip-key { color: var(--text-muted); font-size: .73rem; flex-shrink: 0; }
+.tooltip-val { color: var(--text-primary); font-weight: 600; text-align: right; font-size: .75rem; }
+
+/* ── Utility ─────────────────────────────────────────────────── */
+.hidden { display: none !important; }
+.mt-8  { margin-top: 8px; }
+.mt-16 { margin-top: 16px; }
+.mb-8  { margin-bottom: 8px; }
+.mb-16 { margin-bottom: 16px; }
+.text-center { text-align: center; }
+
+/* ── Slot color palette (sc-0..sc-19) ───────────────────────── */
+.sc-0  { background: #d9f99d; border-color: #bef264; color: #3f6212; }
+.sc-1  { background: #bbf7d0; border-color: #86efac; color: #166534; }
+.sc-2  { background: #fde68a; border-color: #fcd34d; color: #92400e; }
+.sc-3  { background: #ddd6fe; border-color: #c4b5fd; color: #5b21b6; }
+.sc-4  { background: #fed7aa; border-color: #fdba74; color: #9a3412; }
+.sc-5  { background: #a5f3fc; border-color: #67e8f9; color: #0e7490; }
+.sc-6  { background: #fce7f3; border-color: #f9a8d4; color: #9d174d; }
+.sc-7  { background: #d1fae5; border-color: #6ee7b7; color: #065f46; }
+.sc-8  { background: #e0e7ff; border-color: #a5b4fc; color: #3730a3; }
+.sc-9  { background: #fef3c7; border-color: #fde68a; color: #92400e; }
+.sc-10 { background: #dcfce7; border-color: #86efac; color: #166534; }
+.sc-11 { background: #ede9fe; border-color: #c4b5fd; color: #5b21b6; }
+.sc-12 { background: #fff7ed; border-color: #fdba74; color: #9a3412; }
+.sc-13 { background: #ecfccb; border-color: #bef264; color: #3f6212; }
+.sc-14 { background: #f0fdf4; border-color: #86efac; color: #166534; }
+.sc-15 { background: #fdf4ff; border-color: #e879f9; color: #701a75; }
+.sc-16 { background: #fffbeb; border-color: #fcd34d; color: #92400e; }
+.sc-17 { background: #f0f9ff; border-color: #7dd3fc; color: #0c4a6e; }
+.sc-18 { background: #fef2f2; border-color: #fca5a5; color: #991b1b; }
+.sc-19 { background: #fff1f2; border-color: #fb7185; color: #9f1239; }
+
+/* ── Supplemental helpers ────────────────────────────────────── */
+.row--changed td  { background: #fffbeb !important; }
+.td-mono          { font-family: var(--font-mono); font-size: .78rem; }
+.td-center        { text-align: center; }
+.td-num           { text-align: center; font-weight: 700; }
+.td-highlight     { color: var(--accent-dark); font-weight: 600; }
+
+.lab-tag {
+  display: inline-block;
+  background: var(--green-light);
+  color: var(--green);
+  font-size: .63rem;
+  font-weight: 700;
+  padding: 0 5px;
+  border-radius: 3px;
+  margin-left: 4px;
+  vertical-align: middle;
+  border: 1px solid #86efac;
+}
+.group-badge {
+  display: inline-block;
+  background: var(--accent-light);
+  color: var(--accent-dark);
+  font-size: .68rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.frag-note { font-size: .78rem; color: var(--text-muted); margin-bottom: 12px; }
+
+/* Scrollbar styling */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--surface-2); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #c3d6a6; }
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .tab-contents  { padding: 16px; }
+  .app-header    { padding: 0 16px; }
+  .header-title  { font-size: .9rem; }
+  .tab-btn       { padding: 12px 12px; font-size: .75rem; }
+  .stats-bar     { padding: 0; }
+  .stat-card     { padding: 8px 12px; min-width: 70px; }
+  .stat-value    { font-size: 1.2rem; }
+  .algo-grid     { grid-template-columns: 1fr; }
+  .recovery-grid { grid-template-columns: 1fr; }
+  .header-actions .btn { padding: 6px 10px; font-size: .73rem; }
+}
+@media (max-width: 480px) {
+  .header-title-group { display: none; }
+}
+
+</style>
+</head>
+<body>
+<script>window.__INLINE_DATA__ = {
+  "slots": [
+    {"id": 0, "day": "Mon", "time": "09:00", "label": "Mon 09:00"},
+    {"id": 1, "day": "Mon", "time": "10:00", "label": "Mon 10:00"},
+    {"id": 2, "day": "Mon", "time": "11:00", "label": "Mon 11:00"},
+    {"id": 3, "day": "Mon", "time": "12:00", "label": "Mon 12:00"},
+    {"id": 4, "day": "Tue", "time": "09:00", "label": "Tue 09:00"},
+    {"id": 5, "day": "Tue", "time": "10:00", "label": "Tue 10:00"},
+    {"id": 6, "day": "Tue", "time": "11:00", "label": "Tue 11:00"},
+    {"id": 7, "day": "Tue", "time": "12:00", "label": "Tue 12:00"},
+    {"id": 8, "day": "Wed", "time": "09:00", "label": "Wed 09:00"},
+    {"id": 9, "day": "Wed", "time": "10:00", "label": "Wed 10:00"},
+    {"id": 10, "day": "Wed", "time": "11:00", "label": "Wed 11:00"},
+    {"id": 11, "day": "Wed", "time": "12:00", "label": "Wed 12:00"},
+    {"id": 12, "day": "Thu", "time": "09:00", "label": "Thu 09:00"},
+    {"id": 13, "day": "Thu", "time": "10:00", "label": "Thu 10:00"},
+    {"id": 14, "day": "Thu", "time": "11:00", "label": "Thu 11:00"},
+    {"id": 15, "day": "Thu", "time": "12:00", "label": "Thu 12:00"},
+    {"id": 16, "day": "Fri", "time": "09:00", "label": "Fri 09:00"},
+    {"id": 17, "day": "Fri", "time": "10:00", "label": "Fri 10:00"},
+    {"id": 18, "day": "Fri", "time": "11:00", "label": "Fri 11:00"},
+    {"id": 19, "day": "Fri", "time": "12:00", "label": "Fri 12:00"}
+  ],
+  "rooms": [
+    {"id": 0, "name": "Room 101", "isLab": false, "capacity": 60, "available": false},
+    {"id": 1, "name": "Room 102", "isLab": false, "capacity": 60, "available": true},
+    {"id": 2, "name": "Room 103", "isLab": false, "capacity": 60, "available": true},
+    {"id": 3, "name": "Lab 201", "isLab": true, "capacity": 40, "available": true},
+    {"id": 4, "name": "Lab 202", "isLab": true, "capacity": 40, "available": true}
+  ],
+  "teachers": [
+    {"id": 0, "name": "Dr. Sharma", "available": true, "unavailableSlots": []},
+    {"id": 1, "name": "Prof. Mehta", "available": true, "unavailableSlots": []},
+    {"id": 2, "name": "Dr. Verma", "available": true, "unavailableSlots": []},
+    {"id": 3, "name": "Prof. Singh", "available": true, "unavailableSlots": [0, 1, 2, 3]},
+    {"id": 4, "name": "Dr. Rao", "available": true, "unavailableSlots": [4, 5, 6, 7, 12, 13, 14, 15]}
+  ],
+  "classes": [
+    {"id": 0, "subject": "DAA", "group": "A", "teacherId": 0, "needsLab": false, "assignedSlot": 0, "assignedRoom": 2, "color": 0, "fragility": 37},
+    {"id": 1, "subject": "DBMS", "group": "A", "teacherId": 1, "needsLab": false, "assignedSlot": 5, "assignedRoom": 1, "color": 5, "fragility": 39},
+    {"id": 2, "subject": "CN", "group": "A", "teacherId": 2, "needsLab": false, "assignedSlot": 4, "assignedRoom": 1, "color": 4, "fragility": 38},
+    {"id": 3, "subject": "AI Lab", "group": "A", "teacherId": 3, "needsLab": true, "assignedSlot": 7, "assignedRoom": 3, "color": 7, "fragility": 24},
+    {"id": 4, "subject": "OS", "group": "A", "teacherId": 4, "needsLab": false, "assignedSlot": 8, "assignedRoom": 1, "color": 8, "fragility": 24},
+    {"id": 5, "subject": "DAA", "group": "B", "teacherId": 0, "needsLab": false, "assignedSlot": 4, "assignedRoom": 2, "color": 4, "fragility": 42},
+    {"id": 6, "subject": "TOC", "group": "B", "teacherId": 1, "needsLab": false, "assignedSlot": 3, "assignedRoom": 2, "color": 3, "fragility": 39},
+    {"id": 7, "subject": "SE", "group": "B", "teacherId": 2, "needsLab": false, "assignedSlot": 1, "assignedRoom": 2, "color": 1, "fragility": 41},
+    {"id": 8, "subject": "ML Lab", "group": "B", "teacherId": 3, "needsLab": true, "assignedSlot": 6, "assignedRoom": 3, "color": 6, "fragility": 26},
+    {"id": 9, "subject": "CD", "group": "B", "teacherId": 4, "needsLab": false, "assignedSlot": 2, "assignedRoom": 2, "color": 2, "fragility": 22},
+    {"id": 10, "subject": "DBMS", "group": "C", "teacherId": 1, "needsLab": false, "assignedSlot": 6, "assignedRoom": 1, "color": 6, "fragility": 43},
+    {"id": 11, "subject": "CN", "group": "C", "teacherId": 2, "needsLab": false, "assignedSlot": 2, "assignedRoom": 1, "color": 2, "fragility": 42},
+    {"id": 12, "subject": "AI Lab", "group": "C", "teacherId": 3, "needsLab": true, "assignedSlot": 5, "assignedRoom": 3, "color": 5, "fragility": 26},
+    {"id": 13, "subject": "OS", "group": "C", "teacherId": 0, "needsLab": false, "assignedSlot": 3, "assignedRoom": 1, "color": 3, "fragility": 42},
+    {"id": 14, "subject": "SE", "group": "C", "teacherId": 4, "needsLab": false, "assignedSlot": 1, "assignedRoom": 1, "color": 1, "fragility": 22},
+    {"id": 15, "subject": "DAA", "group": "D", "teacherId": 2, "needsLab": false, "assignedSlot": 5, "assignedRoom": 2, "color": 5, "fragility": 44},
+    {"id": 16, "subject": "TOC", "group": "D", "teacherId": 0, "needsLab": false, "assignedSlot": 6, "assignedRoom": 2, "color": 6, "fragility": 44},
+    {"id": 17, "subject": "DBMS", "group": "D", "teacherId": 1, "needsLab": false, "assignedSlot": 7, "assignedRoom": 1, "color": 7, "fragility": 42},
+    {"id": 18, "subject": "CV Lab", "group": "D", "teacherId": 3, "needsLab": true, "assignedSlot": 4, "assignedRoom": 3, "color": 4, "fragility": 26},
+    {"id": 19, "subject": "ML", "group": "D", "teacherId": 4, "needsLab": false, "assignedSlot": 0, "assignedRoom": 1, "color": 0, "fragility": 22}
+  ],
+  "recovery": {
+    "success": true,
+    "affectedCount": 7,
+    "reassignedCount": 7,
+    "log": "Disruption: Room \"Room 101\" unavailable.\nAffected classes: 7\nMax-flow reassignments: 7 / 7\n  Class 1 (DBMS-A) → Slot 5 (Tue 10:00), Room 1 (Room 102)\n  Class 15 (DAA-D) → Slot 5 (Tue 10:00), Room 2 (Room 103)\n  Class 10 (DBMS-C) → Slot 6 (Tue 11:00), Room 1 (Room 102)\n  Class 16 (TOC-D) → Slot 6 (Tue 11:00), Room 2 (Room 103)\n  Class 4 (OS-A) → Slot 8 (Wed 09:00), Room 1 (Room 102)\n  Class 5 (DAA-B) → Slot 4 (Tue 09:00), Room 2 (Room 103)\n  Class 17 (DBMS-D) → Slot 7 (Tue 12:00), Room 1 (Room 102)\n",
+    "changes": [
+      {"classId": 1, "newSlot": 5, "newRoom": 1},
+      {"classId": 15, "newSlot": 5, "newRoom": 2},
+      {"classId": 10, "newSlot": 6, "newRoom": 1},
+      {"classId": 16, "newSlot": 6, "newRoom": 2},
+      {"classId": 4, "newSlot": 8, "newRoom": 1},
+      {"classId": 5, "newSlot": 4, "newRoom": 2},
+      {"classId": 17, "newSlot": 7, "newRoom": 1}
+    ]
+  }
+}
+;</script>
+
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-logo">
+        <svg class="logo-icon" viewBox="0 0 40 40" width="40" height="40" fill="none">
+          <circle cx="20" cy="20" r="18" stroke="#60a5fa" stroke-width="2"/>
+          <circle cx="20" cy="20" r="6"  fill="#60a5fa"/>
+          <line x1="20" y1="2"  x2="20" y2="10" stroke="#60a5fa" stroke-width="2"/>
+          <line x1="20" y1="30" x2="20" y2="38" stroke="#60a5fa" stroke-width="2"/>
+          <line x1="2"  y1="20" x2="10" y2="20" stroke="#60a5fa" stroke-width="2"/>
+          <line x1="30" y1="20" x2="38" y2="20" stroke="#60a5fa" stroke-width="2"/>
+          <line x1="7"  y1="7"  x2="13" y2="13" stroke="#60a5fa" stroke-width="1.5"/>
+          <line x1="27" y1="27" x2="33" y2="33" stroke="#60a5fa" stroke-width="1.5"/>
+          <line x1="33" y1="7"  x2="27" y2="13" stroke="#60a5fa" stroke-width="1.5"/>
+          <line x1="7"  y1="33" x2="13" y2="27" stroke="#60a5fa" stroke-width="1.5"/>
+        </svg>
+        <div class="header-title-group">
+          <h1 class="header-title">Adaptive Graph-Based Timetable Optimization</h1>
+          <p class="header-subtitle">Recovery Framework &mdash; DAA Project</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-warning" onclick="window.simulateDisruption && window.simulateDisruption()">
+          ⚡ Simulate Disruption
+        </button>
+        <button class="btn btn-primary" onclick="window.loadData && window.loadData()">
+          ↺ Reload Data
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAV TABS -->
+  <nav class="tab-nav" role="tablist">
+    <button class="tab-btn active" role="tab" data-tab="timetable"    onclick="window.switchTab('timetable')">
+      🗓 Timetable
+    </button>
+    <button class="tab-btn" role="tab" data-tab="fragility"   onclick="window.switchTab('fragility')">
+      📊 Fragility
+    </button>
+    <button class="tab-btn" role="tab" data-tab="graph"       onclick="window.switchTab('graph')">
+      🕸 Conflict Graph
+    </button>
+    <button class="tab-btn" role="tab" data-tab="flow"        onclick="window.switchTab('flow')">
+      🌊 Flow Network
+    </button>
+    <button class="tab-btn" role="tab" data-tab="algorithms"  onclick="window.switchTab('algorithms')">
+      🧮 Algorithms
+    </button>
+    <button class="tab-btn" role="tab" data-tab="recovery"    onclick="window.switchTab('recovery')">
+      🔄 Recovery
+    </button>
+  </nav>
+
+  <!-- STATS BAR -->
+  <section class="stats-bar" id="stats-bar">
+    <div class="stat-card">
+      <span class="stat-value" id="stat-classes">—</span>
+      <span class="stat-label">Classes</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value" id="stat-rooms">—</span>
+      <span class="stat-label">Rooms</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value" id="stat-teachers">—</span>
+      <span class="stat-label">Teachers</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value" id="stat-slots">—</span>
+      <span class="stat-label">Time Slots</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value stat-fragile" id="stat-fragile">—</span>
+      <span class="stat-label">Fragile</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value stat-hfragile" id="stat-hfragile">—</span>
+      <span class="stat-label">Highly Fragile</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value stat-changed" id="stat-changed">—</span>
+      <span class="stat-label">Changed</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value stat-colors" id="stat-colors">—</span>
+      <span class="stat-label">Colors Used</span>
+    </div>
+  </section>
+
+  <!-- LOADING STATE -->
+  <div id="loading-overlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Loading timetable data…</p>
+  </div>
+
+  <!-- ERROR STATE -->
+  <div id="error-banner" class="error-banner hidden">
+    <span id="error-message">Failed to load data.</span>
+    <button class="btn btn-primary" onclick="window.loadData()">Retry</button>
+  </div>
+
+  <!-- TAB CONTENT SECTIONS -->
+  <main class="tab-contents">
+
+    <!-- TIMETABLE TAB -->
+    <section id="tab-timetable" class="tab-content active" role="tabpanel">
+      <div class="section-header">
+        <h2>Weekly Timetable Grid</h2>
+        <p class="section-desc">
+          Graph-colored schedule using greedy coloring + backtracking.
+          Each color represents a conflict-free time slot group.
+        </p>
+      </div>
+      <div class="timetable-legend" id="timetable-legend"></div>
+      <div class="timetable-scroll-wrap">
+        <div id="timetable-grid" class="timetable-grid"></div>
+      </div>
+    </section>
+
+    <!-- FRAGILITY TAB -->
+    <section id="tab-fragility" class="tab-content" role="tabpanel">
+      <div class="section-header">
+        <h2>Fragility Analysis</h2>
+        <p class="section-desc">
+          Fragility = number of alternative (slot, room) pairs available for each class.
+          Lower fragility = higher scheduling risk.
+        </p>
+      </div>
+      <div id="fragility-summary" class="fragility-summary"></div>
+      <div class="table-wrap">
+        <table id="fragility-table" class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Subject</th>
+              <th>Group</th>
+              <th>Teacher</th>
+              <th>Slot</th>
+              <th>Room</th>
+              <th>Alternatives</th>
+              <th>Status</th>
+              <th>Risk</th>
+            </tr>
+          </thead>
+          <tbody id="fragility-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CONFLICT GRAPH TAB -->
+    <section id="tab-graph" class="tab-content" role="tabpanel">
+      <div class="section-header">
+        <h2>Conflict Graph</h2>
+        <p class="section-desc">
+          Welsh-Powell graph coloring. Nodes = classes; edges = scheduling conflicts
+          (same teacher/room/group). Node color = assigned slot color.
+        </p>
+      </div>
+      <div class="graph-container">
+        <canvas id="graphCanvas" class="graph-canvas"></canvas>
+        <div id="graph-legend" class="graph-legend"></div>
+      </div>
+      <p id="graph-hover-hint" class="hint-text">Hover over a node to highlight its conflicts.</p>
+    </section>
+
+    <!-- FLOW NETWORK TAB -->
+    <section id="tab-flow" class="tab-content" role="tabpanel">
+      <div class="section-header">
+        <h2>Max-Flow / Bipartite Matching Network</h2>
+        <p class="section-desc">
+          Edmonds-Karp algorithm (BFS-augmented Ford-Fulkerson) finds maximum matching
+          of affected classes to available (slot, room) pairs.
+        </p>
+      </div>
+      <div id="flow-diagram" class="flow-diagram"></div>
+      <div class="flow-legend">
+        <span class="flow-edge-demo flow-matched"></span> Matched (flow = 1) &nbsp;
+        <span class="flow-edge-demo flow-unmatched"></span> Unmatched &nbsp;
+        <span class="flow-edge-demo flow-source"></span> Source / Sink edges
+      </div>
+      <p class="complexity-note" id="flow-complexity"></p>
+    </section>
+
+    <!-- ALGORITHMS TAB -->
+    <section id="tab-algorithms" class="tab-content" role="tabpanel">
+      <div class="section-header">
+        <h2>Algorithms &amp; Complexity</h2>
+        <p class="section-desc">
+          Every algorithm employed in the framework, with complexity analysis
+          and illustrative pseudocode.
+        </p>
+      </div>
+      <div id="algo-grid" class="algo-grid"></div>
+    </section>
+
+    <!-- RECOVERY TAB -->
+    <section id="tab-recovery" class="tab-content" role="tabpanel">
+      <div class="section-header">
+        <h2>Recovery &amp; Disruption Handling</h2>
+        <p class="section-desc">
+          BFS identifies affected classes; Max-Flow reassigns them.
+          Simulate a disruption above to see the framework in action.
+        </p>
+      </div>
+      <div id="recovery-banner" class="recovery-banner"></div>
+      <div id="recovery-pipeline" class="recovery-pipeline"></div>
+      <div id="recovery-stats-row" class="recovery-stats-row"></div>
+      <div class="recovery-grid">
+        <div>
+          <h3 class="sub-heading">Change Log</h3>
+          <div id="recovery-log" class="recovery-log"></div>
+        </div>
+        <div>
+          <h3 class="sub-heading">Reassignment Table</h3>
+          <div class="table-wrap">
+            <table class="data-table" id="recovery-table">
+              <thead>
+                <tr>
+                  <th>Class ID</th>
+                  <th>Subject</th>
+                  <th>New Slot</th>
+                  <th>New Room</th>
+                </tr>
+              </thead>
+              <tbody id="recovery-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- TOOLTIP -->
+  <div id="tooltip" class="tooltip hidden" role="tooltip"></div>
+
+  <!-- SCRIPTS -->
+  <script src="js/app.js"></script>
+  <script src="js/timetable.js"></script>
+  <script src="js/fragility.js"></script>
+  <script src="js/graph.js"></script>
+  <script src="js/flow.js"></script>
+  <script src="js/algorithms.js"></script>
+  <script src="js/recovery.js"></script>
+
+<script>/* ================================================================
+   app.js — Main Application Controller
+   Adaptive Timetable Optimization Framework
+   ================================================================ */
+
+(function () {
+  'use strict';
+
+  // ── Global App State ────────────────────────────────────────────
+  var APP = {
+    data:         null,
+    changedIds:   new Set(),
+    recoveryData: null,
+    currentTab:   'timetable'
+  };
+  window.APP = APP;
+
+  // ── Slot color palette (index = color id) ───────────────────────
+  var SLOT_COLORS = [
+    '#3b82f6','#10b981','#f59e0b','#ef4444',
+    '#8b5cf6','#06b6d4','#f97316','#ec4899',
+    '#84cc16','#14b8a6','#e879f9','#fb923c'
+  ];
+  window.SLOT_COLORS = SLOT_COLORS;
+
+  // ── DOM helpers ──────────────────────────────────────────────────
+  function el(id) { return document.getElementById(id); }
+
+  function showLoading(visible) {
+    var overlay = el('loading-overlay');
+    if (overlay) overlay.classList.toggle('hidden', !visible);
+  }
+
+  function showError(msg) {
+    var banner = el('error-banner');
+    var errMsg = el('error-message');
+    if (banner) {
+      banner.classList.remove('hidden');
+      if (errMsg) errMsg.textContent = msg;
+    }
+  }
+
+  function hideError() {
+    var banner = el('error-banner');
+    if (banner) banner.classList.add('hidden');
+  }
+
+  // ── Load Data ────────────────────────────────────────────────────
+  async function loadData() {
+    showLoading(true);
+    hideError();
+
+    try {
+      var response = await fetch('../output/timetable.json?_=' + Date.now());
+      if (!response.ok) throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+      var json = await response.json();
+      APP.data         = json;
+      APP.recoveryData = json.recovery || null;
+      APP.changedIds   = new Set();
+
+      if (APP.recoveryData && APP.recoveryData.changes) {
+        APP.recoveryData.changes.forEach(function (c) {
+          APP.changedIds.add(c.classId);
+        });
+      }
+
+      showLoading(false);
+      render();
+    } catch (err) {
+      showLoading(false);
+      showError('Failed to load timetable.json — ' + err.message +
+                '. Make sure the backend has run and output/timetable.json exists.');
+      console.error('[APP] loadData error:', err);
+      // Fallback: load demo data so UI is still useful
+      loadDemoData();
+    }
+  }
+  window.loadData = loadData;
+
+  // ── Demo / Fallback Data  (rich professor demo) ──────────────────
+  function loadDemoData() {
+    var slots = [
+      {id:0,day:'Mon',time:'09:00',label:'Mon 09:00'},
+      {id:1,day:'Mon',time:'10:00',label:'Mon 10:00'},
+      {id:2,day:'Mon',time:'11:00',label:'Mon 11:00'},
+      {id:3,day:'Mon',time:'12:00',label:'Mon 12:00'},
+      {id:4,day:'Tue',time:'09:00',label:'Tue 09:00'},
+      {id:5,day:'Tue',time:'10:00',label:'Tue 10:00'},
+      {id:6,day:'Tue',time:'11:00',label:'Tue 11:00'},
+      {id:7,day:'Tue',time:'12:00',label:'Tue 12:00'},
+      {id:8,day:'Wed',time:'09:00',label:'Wed 09:00'},
+      {id:9,day:'Wed',time:'10:00',label:'Wed 10:00'},
+      {id:10,day:'Wed',time:'11:00',label:'Wed 11:00'},
+      {id:11,day:'Wed',time:'12:00',label:'Wed 12:00'},
+      {id:12,day:'Thu',time:'09:00',label:'Thu 09:00'},
+      {id:13,day:'Thu',time:'10:00',label:'Thu 10:00'},
+      {id:14,day:'Thu',time:'11:00',label:'Thu 11:00'},
+      {id:15,day:'Thu',time:'12:00',label:'Thu 12:00'},
+      {id:16,day:'Fri',time:'09:00',label:'Fri 09:00'},
+      {id:17,day:'Fri',time:'10:00',label:'Fri 10:00'},
+      {id:18,day:'Fri',time:'11:00',label:'Fri 11:00'},
+      {id:19,day:'Fri',time:'12:00',label:'Fri 12:00'}
+    ];
+
+    var rooms = [
+      {id:0,name:'Room 101',isLab:false,capacity:60,available:true},
+      {id:1,name:'Room 102',isLab:false,capacity:60,available:true},
+      {id:2,name:'Room 103',isLab:false,capacity:60,available:true},
+      {id:3,name:'Lab 201', isLab:true, capacity:40,available:true},
+      {id:4,name:'Lab 202', isLab:true, capacity:40,available:true}
+    ];
+
+    var teachers = [
+      {id:0,name:'Dr. Sharma',  available:true},
+      {id:1,name:'Prof. Mehta', available:true},
+      {id:2,name:'Dr. Verma',   available:true},
+      {id:3,name:'Prof. Singh', available:true}
+    ];
+
+    // 15 classes across 3 groups — fragility deliberately varied for demo
+    var classes = [
+      // Group A
+      {id:0, subject:'DAA',  group:'A',teacherId:0,needsLab:false,assignedSlot:2, assignedRoom:2,color:2, fragility:45},
+      {id:1, subject:'DBMS', group:'A',teacherId:1,needsLab:false,assignedSlot:0, assignedRoom:0,color:0, fragility:45},
+      {id:2, subject:'CN',   group:'A',teacherId:2,needsLab:false,assignedSlot:1, assignedRoom:0,color:1, fragility:46},
+      {id:3, subject:'AI',   group:'A',teacherId:3,needsLab:true, assignedSlot:3, assignedRoom:3,color:3, fragility:1},  // HIGHLY FRAGILE
+      {id:4, subject:'OS',   group:'A',teacherId:0,needsLab:false,assignedSlot:4, assignedRoom:0,color:4, fragility:3},  // FRAGILE
+      // Group B
+      {id:5, subject:'DAA',  group:'B',teacherId:0,needsLab:false,assignedSlot:0, assignedRoom:1,color:0, fragility:45},
+      {id:6, subject:'TOC',  group:'B',teacherId:1,needsLab:false,assignedSlot:1, assignedRoom:1,color:1, fragility:46},
+      {id:7, subject:'SE',   group:'B',teacherId:2,needsLab:false,assignedSlot:2, assignedRoom:0,color:2, fragility:45},
+      {id:8, subject:'CD',   group:'B',teacherId:3,needsLab:false,assignedSlot:4, assignedRoom:1,color:4, fragility:2},  // FRAGILE
+      {id:9, subject:'ML',   group:'B',teacherId:1,needsLab:true, assignedSlot:3, assignedRoom:4,color:3, fragility:1},  // HIGHLY FRAGILE
+      // Group C
+      {id:10,subject:'DBMS', group:'C',teacherId:2,needsLab:false,assignedSlot:0, assignedRoom:2,color:0, fragility:44},
+      {id:11,subject:'CN',   group:'C',teacherId:3,needsLab:false,assignedSlot:5, assignedRoom:0,color:5, fragility:3},  // FRAGILE
+      {id:12,subject:'AI',   group:'C',teacherId:0,needsLab:true, assignedSlot:1, assignedRoom:3,color:1, fragility:2},  // FRAGILE
+      {id:13,subject:'OS',   group:'C',teacherId:1,needsLab:false,assignedSlot:2, assignedRoom:1,color:2, fragility:44},
+      {id:14,subject:'SE',   group:'C',teacherId:2,needsLab:false,assignedSlot:3, assignedRoom:0,color:3, fragility:46}
+    ];
+
+    // Recovery: Room 101 (id=0) disrupted — classes 1,2,7,11 affected
+    var recoveryChanges = [
+      {classId:1, newSlot:8,  newRoom:2},
+      {classId:2, newSlot:1,  newRoom:2},
+      {classId:7, newSlot:5,  newRoom:2},
+      {classId:11,newSlot:6,  newRoom:1},
+    ];
+
+    APP.data = { slots:slots, rooms:rooms, teachers:teachers, classes:classes };
+    APP.recoveryData = {
+      success: true,
+      affectedCount: 4,
+      reassignedCount: 4,
+      log:
+        'Disruption: Room "Room 101" unavailable.\n' +
+        'Affected classes: 4\n' +
+        '\n' +
+        '[BFS] Traversing conflict graph from Class 1 (DBMS-A)...\n' +
+        '[BFS] Level 0: DBMS-A\n' +
+        '[BFS] Level 1: DAA-A, CN-A, OS-A, TOC-B, OS-C\n' +
+        '[BFS] Level 2: SE-B, DAA-B, AI-C, DBMS-C, SE-C\n' +
+        '[BFS] Affected region: 15 classes explored.\n' +
+        '\n' +
+        '[FLOW] Building bipartite flow network...\n' +
+        '[FLOW]   Source  → 4 affected class nodes  (cap=1 each)\n' +
+        '[FLOW]   Classes → valid (slot,room) pairs  (cap=1 each)\n' +
+        '[FLOW]   Pairs   → Sink                     (cap=1 each)\n' +
+        '\n' +
+        '[EK]  Edmonds-Karp BFS augmentation running...\n' +
+        '[EK]  Augmenting path 1: src→DBMS-A→(Wed 09:00/Room 103)→sink  flow=1\n' +
+        '[EK]  Augmenting path 2: src→CN-A→(Mon 10:00/Room 103)→sink     flow=1\n' +
+        '[EK]  Augmenting path 3: src→SE-B→(Tue 10:00/Room 103)→sink     flow=1\n' +
+        '[EK]  Augmenting path 4: src→CN-C→(Tue 11:00/Room 102)→sink     flow=1\n' +
+        '[EK]  No more augmenting paths found.\n' +
+        '\n' +
+        'Max-flow reassignments: 4 / 4\n' +
+        '  Class 1  (DBMS-A) → Slot 8  [Wed 09:00], Room 2 [Room 103]\n' +
+        '  Class 2  (CN-A)   → Slot 1  [Mon 10:00], Room 2 [Room 103]\n' +
+        '  Class 7  (SE-B)   → Slot 5  [Tue 10:00], Room 2 [Room 103]\n' +
+        '  Class 11 (CN-C)   → Slot 6  [Tue 11:00], Room 1 [Room 102]\n' +
+        '\n' +
+        'Full recovery achieved! Unaffected classes preserved.',
+      changes: recoveryChanges
+    };
+
+    recoveryChanges.forEach(function(c){ APP.changedIds.add(c.classId); });
+
+    showLoading(false);
+    render();
+  }
+
+  // ── Render All ───────────────────────────────────────────────────
+  function render() {
+    updateStats();
+    if (typeof window.renderTimetable  === 'function') window.renderTimetable();
+    if (typeof window.renderFragility  === 'function') window.renderFragility();
+    if (typeof window.renderConflictGraph === 'function') window.renderConflictGraph();
+    if (typeof window.renderFlowNetwork=== 'function') window.renderFlowNetwork();
+    if (typeof window.renderAlgorithms === 'function') window.renderAlgorithms();
+    if (typeof window.renderRecovery   === 'function') window.renderRecovery();
+  }
+  window.render = render;
+
+  // ── Switch Tab ───────────────────────────────────────────────────
+  function switchTab(id) {
+    APP.currentTab = id;
+
+    document.querySelectorAll('.tab-btn').forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.tab === id);
+    });
+    document.querySelectorAll('.tab-content').forEach(function (sec) {
+      sec.classList.toggle('active', sec.id === 'tab-' + id);
+    });
+
+    // Re-render graph on tab switch (canvas sizing)
+    if (id === 'graph' && typeof window.renderConflictGraph === 'function') {
+      setTimeout(window.renderConflictGraph, 50);
+    }
+    if (id === 'flow' && typeof window.renderFlowNetwork === 'function') {
+      setTimeout(window.renderFlowNetwork, 50);
+    }
+  }
+  window.switchTab = switchTab;
+
+  // ── Update Stats Bar ─────────────────────────────────────────────
+  function updateStats() {
+    if (!APP.data) return;
+    var d = APP.data;
+
+    var fragile = 0, hfragile = 0;
+    d.classes.forEach(function (c) {
+      if (c.fragility <= 1) hfragile++;
+      else if (c.fragility <= 3) fragile++;
+    });
+
+    var usedColors = new Set(d.classes.map(function(c){ return c.color; }));
+
+    setStatEl('stat-classes',  d.classes.length);
+    setStatEl('stat-rooms',    d.rooms.length);
+    setStatEl('stat-teachers', d.teachers.length);
+    setStatEl('stat-slots',    d.slots.length);
+    setStatEl('stat-fragile',  fragile);
+    setStatEl('stat-hfragile', hfragile);
+    setStatEl('stat-changed',  APP.changedIds.size);
+    setStatEl('stat-colors',   usedColors.size);
+  }
+
+  function setStatEl(id, val) {
+    var e = el(id);
+    if (e) e.textContent = val;
+  }
+
+  // ── Tooltip ──────────────────────────────────────────────────────
+  var _tooltipTimeout = null;
+
+  function showTooltip(e, classId) {
+    if (!APP.data) return;
+    var cls = APP.data.classes.find(function(c){ return c.id === classId; });
+    if (!cls) return;
+
+    var slot    = APP.data.slots[cls.assignedSlot]   || {};
+    var room    = APP.data.rooms[cls.assignedRoom]   || {};
+    var teacher = APP.data.teachers[cls.teacherId]   || {};
+    var changed = APP.changedIds.has(classId);
+    var status  = cls.fragility <= 1 ? 'Highly Fragile' : cls.fragility <= 3 ? 'Fragile' : 'Stable';
+
+    var tip = el('tooltip');
+    if (!tip) return;
+
+    tip.innerHTML =
+      '<div class="tooltip-title">' + esc(cls.subject) + ' — Group ' + esc(cls.group) + '</div>' +
+      row('Teacher',      teacher.name  || '—') +
+      row('Slot',         slot.label    || '—') +
+      row('Room',         room.name     || '—') +
+      row('Type',         cls.needsLab ? '🔬 Lab' : '📘 Lecture') +
+      row('Alternatives', cls.fragility) +
+      row('Status',       status) +
+      (changed ? row('Recovery', '⚡ Reassigned') : '');
+
+    var x = e.clientX + 14;
+    var y = e.clientY + 14;
+    if (x + 260 > window.innerWidth)  x = e.clientX - 250;
+    if (y + 200 > window.innerHeight) y = e.clientY - 180;
+    tip.style.left = x + 'px';
+    tip.style.top  = y + 'px';
+    tip.classList.remove('hidden');
+  }
+  window.showTooltip = showTooltip;
+
+  function hideTooltip() {
+    var tip = el('tooltip');
+    if (tip) tip.classList.add('hidden');
+  }
+  window.hideTooltip = hideTooltip;
+
+  function row(k, v) {
+    return '<div class="tooltip-row">' +
+      '<span class="tooltip-key">' + esc(String(k)) + '</span>' +
+      '<span class="tooltip-val">' + esc(String(v)) + '</span>' +
+    '</div>';
+  }
+
+  function esc(s) {
+    return String(s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  window._esc = esc;
+
+  // ── Simulate Disruption ──────────────────────────────────────────
+  function simulateDisruption() {
+    if (!APP.data) { alert('Data not loaded yet.'); return; }
+    var classes = APP.data.classes;
+    if (!classes.length) return;
+
+    // Pick 3–5 random classes
+    var count = Math.min(classes.length, 3 + Math.floor(Math.random() * 3));
+    var shuffled = classes.slice().sort(function(){ return Math.random() - 0.5; });
+    var affected = shuffled.slice(0, count);
+
+    APP.changedIds.clear();
+    var changes = [];
+
+    affected.forEach(function (cls) {
+      APP.changedIds.add(cls.id);
+      var newSlot = (cls.assignedSlot + 2 + Math.floor(Math.random() * 5)) % APP.data.slots.length;
+      var newRoom = (cls.assignedRoom + 1) % APP.data.rooms.length;
+      changes.push({ classId: cls.id, newSlot: newSlot, newRoom: newRoom });
+    });
+
+    var affectedNames = affected.map(function(c){ return c.subject + '/' + c.group; }).join(', ');
+
+    APP.recoveryData = {
+      success:         true,
+      affectedCount:   count,
+      reassignedCount: count,
+      log: "[DISRUPTION] Simulated room/teacher unavailability triggered.\n" +
+           "[BFS] Traversing conflict graph from disrupted nodes...\n" +
+           "[BFS] Affected region: " + affectedNames + "\n" +
+           "[FLOW] Building bipartite graph: " + count + " classes vs available (slot,room) pairs.\n" +
+           "[EK]  Edmonds-Karp BFS augmentation running...\n" +
+           "[EK]  Found augmenting paths: " + count + "\n" +
+           "[FLOW] Max flow = " + count + " — all affected classes matched!\n" +
+           changes.map(function(ch){
+             var c = APP.data.classes.find(function(x){ return x.id===ch.classId; }) || {};
+             var s = APP.data.slots[ch.newSlot] || {};
+             var r = APP.data.rooms[ch.newRoom] || {};
+             return "[OK]   Class " + ch.classId + " (" + (c.subject||'?') + "/" + (c.group||'?') +
+                    ") → " + (s.label||'Slot '+ch.newSlot) + " | " + (r.name||'Room '+ch.newRoom);
+           }).join('\n') + "\n" +
+           "[DONE] Recovery complete. " + count + "/" + count + " reassigned, 0 unresolved.",
+      changes: changes
+    };
+
+    render();
+    switchTab('recovery');
+  }
+  window.simulateDisruption = simulateDisruption;
+
+  // ── Global mousemove for tooltip positioning ─────────────────────
+  document.addEventListener('mousemove', function(e) {
+    var tip = el('tooltip');
+    if (tip && !tip.classList.contains('hidden')) {
+      var x = e.clientX + 14;
+      var y = e.clientY + 14;
+      if (x + 260 > window.innerWidth)  x = e.clientX - 250;
+      if (y + 220 > window.innerHeight) y = e.clientY - 200;
+      tip.style.left = x + 'px';
+      tip.style.top  = y + 'px';
+    }
+  });
+
+  // ── Window resize: re-render graph ───────────────────────────────
+  var _resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(_resizeTimer);
+    _resizeTimer = setTimeout(function () {
+      if (APP.currentTab === 'graph' && typeof window.renderConflictGraph === 'function') {
+        window.renderConflictGraph();
+      }
+    }, 200);
+  });
+
+  // ── Init ─────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function () {
+    // If inline data was embedded (DEMO.html mode), use it directly
+    if (window.__INLINE_DATA__) {
+      var d = window.__INLINE_DATA__;
+      APP.data         = d;
+      APP.recoveryData = d.recovery || null;
+      APP.changedIds   = new Set();
+      if (d.recovery && d.recovery.changes) {
+        d.recovery.changes.forEach(function(c){ APP.changedIds.add(c.classId); });
+      }
+      showLoading(false);
+      render();
+    } else {
+      showLoading(true);
+      loadData();
+    }
+  });
+
+}());
+</script>
+<script>/* ================================================================
+   timetable.js — Timetable Grid Renderer
+   ================================================================ */
+
+(function () {
+  'use strict';
+
+  // Day order & set
+  var DAY_ORDER = ['Mon','Tue','Wed','Thu','Fri'];
+
+  window.renderTimetable = function renderTimetable() {
+    var grid   = document.getElementById('timetable-grid');
+    var legend = document.getElementById('timetable-legend');
+    var APP    = window.APP;
+
+    if (!APP || !APP.data) {
+      if (grid) grid.innerHTML = emptyState('No timetable data loaded.');
+      return;
+    }
+
+    var data     = APP.data;
+    var classes  = data.classes  || [];
+    var slots    = data.slots    || [];
+    var rooms    = data.rooms    || [];
+    var teachers = data.teachers || [];
+
+    // ── Build time-period and day sets ────────────────────────────
+    var timePeriods = [];
+    var timeSeen    = {};
+    var days        = [];
+    var daySeen     = {};
+
+    slots.forEach(function (s) {
+      if (!timeSeen[s.time]) { timeSeen[s.time] = true; timePeriods.push(s.time); }
+      if (!daySeen[s.day])   { daySeen[s.day]   = true; days.push(s.day); }
+    });
+
+    // Sort days by canonical order
+    days.sort(function (a, b) {
+      var ia = DAY_ORDER.indexOf(a);
+      var ib = DAY_ORDER.indexOf(b);
+      return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+    });
+
+    // Sort times chronologically
+    timePeriods.sort(function (a, b) {
+      return a.localeCompare(b);
+    });
+
+    // ── Build lookup: slotId → {day, time} ───────────────────────
+    var slotMap = {};
+    slots.forEach(function (s) { slotMap[s.id] = s; });
+
+    // ── Build cell map: "day|time" → [classObjs] ─────────────────
+    var cellMap = {};
+    classes.forEach(function (cls) {
+      var s = slotMap[cls.assignedSlot];
+      if (!s) return;
+      var key = s.day + '|' + s.time;
+      if (!cellMap[key]) cellMap[key] = [];
+      cellMap[key].push(cls);
+    });
+
+    // ── Grid template columns ─────────────────────────────────────
+    var colCount = 1 + days.length;
+    var colDef   = '80px ' + days.map(function(){ return '1fr'; }).join(' ');
+
+    // ── Render Legend ─────────────────────────────────────────────
+    if (legend) {
+      legend.innerHTML =
+        legendItem('lc-regular', 'Regular Class') +
+        legendItem('lc-lab',     'Lab Session') +
+        (APP.changedIds.size > 0 ? legendItem('lc-changed', 'Recovered/Changed') : '') +
+        legendItem('lc-fragile',  'Fragile (≤3 alternatives)') +
+        legendItem('lc-hfragile', 'Highly Fragile (≤1 alternative)');
+    }
+
+    // ── Build grid HTML ───────────────────────────────────────────
+    var html = '';
+    grid.style.gridTemplateColumns = colDef;
+
+    // Header row: blank corner + day headers
+    html += '<div class="tt-header-cell" style="position:sticky;left:0;z-index:3;"></div>';
+    days.forEach(function (d) {
+      html += '<div class="tt-header-cell">' + d + '</div>';
+    });
+
+    // Data rows: one row per time period
+    timePeriods.forEach(function (time) {
+      // Time label
+      html += '<div class="tt-time-cell">' + time + '</div>';
+
+      days.forEach(function (day) {
+        var key  = day + '|' + time;
+        var list = cellMap[key] || [];
+        html += '<div class="tt-cell">';
+
+        if (list.length > 0) {
+          html += '<div class="tt-chips">';
+          list.forEach(function (cls) {
+            html += buildChip(cls, rooms, teachers, APP.changedIds);
+          });
+          html += '</div>';
+        }
+
+        html += '</div>';
+      });
+    });
+
+    grid.innerHTML = html;
+
+    // ── Attach tooltip events ─────────────────────────────────────
+    grid.querySelectorAll('.chip').forEach(function (chip) {
+      var cid = parseInt(chip.dataset.cid, 10);
+      chip.addEventListener('mouseenter', function (e) {
+        window.showTooltip && window.showTooltip(e, cid);
+      });
+      chip.addEventListener('mouseleave', function () {
+        window.hideTooltip && window.hideTooltip();
+      });
+    });
+  };
+
+  // ── Chip builder ─────────────────────────────────────────────────
+  function buildChip(cls, rooms, teachers, changedIds) {
+    var room    = rooms[cls.assignedRoom]   || { name: '?' };
+    var teacher = teachers[cls.teacherId]  || { name: '?' };
+    var changed = changedIds.has(cls.id);
+
+    var typeClass = changed ? 'chip-changed'
+                 : cls.needsLab ? 'chip-lab'
+                 : 'chip-regular';
+
+    var fragClass = '';
+    if (cls.fragility <= 1)      fragClass = ' chip-highly-fragile';
+    else if (cls.fragility <= 3) fragClass = ' chip-fragile';
+
+    var colorStyle = '';
+    if (!changed && window.SLOT_COLORS) {
+      var c = window.SLOT_COLORS[cls.color % window.SLOT_COLORS.length];
+      colorStyle = ' style="border-color:' + c + '22;box-shadow:0 0 0 1px ' + c + '55"';
+    }
+
+    return '<div class="chip ' + typeClass + fragClass + '"' +
+           colorStyle +
+           ' data-cid="' + cls.id + '"' +
+           ' title="' + window._esc(cls.subject + ' / ' + cls.group) + '">' +
+             '<span class="chip-dot"></span>' +
+             '<span>' + window._esc(cls.subject) + '</span>' +
+             '<span style="opacity:.7;font-size:.65rem">/' + window._esc(cls.group) + '</span>' +
+             (changed ? '<span style="margin-left:auto;font-size:.7rem">⚡</span>' : '') +
+           '</div>';
+  }
+
+  function legendItem(cls, label) {
+    return '<div class="legend-item">' +
+             '<div class="legend-chip ' + cls + '"></div>' +
+             '<span>' + label + '</span>' +
+           '</div>';
+  }
+
+  function emptyState(msg) {
+    return '<div class="empty-state" style="grid-column:1/-1">' +
+             '<div class="empty-state-icon">📭</div>' +
+             '<div class="empty-state-msg">' + msg + '</div>' +
+           '</div>';
+  }
+
+}());
+</script>
+<script>// ─────────────────────────────────────────────────────────────
+//  fragility.js  —  Fragility Analysis Tab Renderer
+//  Uses CSS classes from style.css
+// ─────────────────────────────────────────────────────────────
+
+window.renderFragility = function () {
+    var d = window.APP.data;
+    if (!d) return;
+
+    var classes  = d.classes;
+    var teachers = d.teachers;
+    var rooms    = d.rooms;
+    var slots    = d.slots;
+
+    // ── Count buckets ──────────────────────────────────────
+    var stable   = classes.filter(function(c){ return c.fragility > 3; }).length;
+    var fragile  = classes.filter(function(c){ return c.fragility > 1 && c.fragility <= 3; }).length;
+    var hFragile = classes.filter(function(c){ return c.fragility <= 1; }).length;
+    var maxFrag  = 1;
+    classes.forEach(function(c){ if (c.fragility > maxFrag) maxFrag = c.fragility; });
+
+    // ── Summary cards ──────────────────────────────────────
+    var summaryEl = document.getElementById('fragility-summary');
+    if (summaryEl) {
+        summaryEl.innerHTML =
+            '<div class="fragility-summary" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">' +
+              fSumCard(stable,   '#34d399', '✅', 'Stable',         'Plenty of alternatives') +
+              fSumCard(fragile,  '#fbbf24', '⚠️', 'Fragile',        'Few alternatives (≤3)') +
+              fSumCard(hFragile, '#f87171', '🔴', 'Highly Fragile', 'Critical — ≤1 alternative') +
+            '</div>' +
+            '<p style="font-size:.8rem;color:#64748b;margin-bottom:12px">' +
+              'Sorted by ascending alternatives (highest risk first). ' +
+              'Fragility = number of valid (slot, room) pairs available as alternatives.' +
+            '</p>';
+    }
+
+    // ── Sort ascending fragility ───────────────────────────
+    var sorted = classes.slice().sort(function(a, b){ return a.fragility - b.fragility; });
+
+    // ── Table body ─────────────────────────────────────────
+    var tbody = document.getElementById('fragility-tbody');
+    if (!tbody) return;
+
+    var rows = '';
+    sorted.forEach(function(c, i) {
+        var teacher = teachers[c.teacherId] ? teachers[c.teacherId].name : '—';
+        var room    = rooms[c.assignedRoom]  ? rooms[c.assignedRoom].name  : '—';
+        var slot    = slots[c.assignedSlot]  ? slots[c.assignedSlot].label : '—';
+        var changed = window.APP.changedIds.has(c.id);
+
+        var badgeCls = c.fragility <= 1 ? 'badge-highly-fragile' :
+                       c.fragility <= 3 ? 'badge-fragile'         : 'badge-stable';
+        var badgeTxt = c.fragility <= 1 ? '🔴 Highly Fragile' :
+                       c.fragility <= 3 ? '⚠️ Fragile'        : '✅ Stable';
+
+        // Risk bar: invert fragility (more alternatives = less risk)
+        var riskPct = Math.max(0, 100 - Math.round((c.fragility / maxFrag) * 100));
+        var fillColor = c.fragility <= 1 ? '#ef4444' :
+                        c.fragility <= 3 ? '#f59e0b' : '#10b981';
+
+        rows +=
+            '<tr' + (changed ? ' style="background:#1c1010"' : '') + '>' +
+              '<td style="text-align:center;color:#64748b">' + (i + 1) + '</td>' +
+              '<td><strong>' + c.subject + '</strong>' +
+                  (c.needsLab ? ' <span class="badge badge-stable" style="background:#064e3b;color:#6ee7b7;font-size:.68rem">LAB</span>' : '') +
+              '</td>' +
+              '<td><span class="badge badge-stable" style="font-size:.72rem">' + c.group + '</span></td>' +
+              '<td style="color:#94a3b8;font-size:.82rem">' + teacher + '</td>' +
+              '<td style="font-family:monospace;font-size:.8rem">' + slot + '</td>' +
+              '<td style="font-family:monospace;font-size:.8rem">' + room + '</td>' +
+              '<td style="text-align:center;font-weight:700;color:' + fillColor + '">' + c.fragility + '</td>' +
+              '<td><span class="badge ' + badgeCls + '">' + badgeTxt + '</span></td>' +
+              '<td style="min-width:120px">' +
+                '<div class="risk-bar">' +
+                  '<div class="risk-fill" style="width:' + riskPct + '%;background:' + fillColor + '"></div>' +
+                '</div>' +
+                '<span style="font-size:.68rem;color:#64748b">' + riskPct + '% risk</span>' +
+              '</td>' +
+            '</tr>';
+    });
+    tbody.innerHTML = rows;
+};
+
+function fSumCard(val, color, icon, label, sub) {
+    return '<div class="frag-summary-card" style="flex:1;min-width:140px">' +
+           '<div class="fsv" style="color:' + color + '">' + icon + ' ' + val + '</div>' +
+           '<div class="fsl">' + label + '</div>' +
+           '<div style="font-size:.7rem;color:#64748b">' + sub + '</div>' +
+           '</div>';
+}
+</script>
+<script>/* ================================================================
+   graph.js — Conflict Graph Canvas Renderer (Welsh-Powell Coloring)
+   ================================================================ */
+
+(function () {
+  'use strict';
+
+  var _canvas, _ctx, _nodes = [], _edges = [], _hoveredNode = null;
+  var _animFrame = null;
+
+  // Slot color palette
+  var PALETTE = [
+    '#3b82f6','#10b981','#f59e0b','#ef4444',
+    '#8b5cf6','#06b6d4','#f97316','#ec4899',
+    '#84cc16','#14b8a6','#e879f9','#fb923c'
+  ];
+
+  window.renderConflictGraph = function renderConflictGraph() {
+    var APP = window.APP;
+    _canvas = document.getElementById('graphCanvas');
+    if (!_canvas) return;
+    _ctx = _canvas.getContext('2d');
+
+    if (!APP || !APP.data) {
+      drawEmpty();
+      return;
+    }
+
+    var data    = APP.data;
+    var classes = data.classes  || [];
+    var slots   = data.slots    || [];
+
+    // ── Size canvas ───────────────────────────────────────────────
+    var container = _canvas.parentElement;
+    var W = container ? Math.min(container.clientWidth - 200, 860) : 640;
+    var H = Math.max(460, Math.min(W * 0.65, 580));
+    _canvas.width  = W;
+    _canvas.height = H;
+
+    // ── Build adjacency list (conflict = same teacher OR same room OR same group+slot) ──
+    var n = classes.length;
+    var adj = Array.from({length: n}, function(){ return []; });
+
+    for (var i = 0; i < n; i++) {
+      for (var j = i + 1; j < n; j++) {
+        var ci = classes[i], cj = classes[j];
+        var conflict =
+          ci.assignedSlot === cj.assignedSlot && (
+            ci.teacherId   === cj.teacherId  ||
+            ci.assignedRoom === cj.assignedRoom ||
+            ci.group       === cj.group
+          );
+        if (conflict) {
+          adj[i].push(j);
+          adj[j].push(i);
+        }
+      }
+    }
+
+    // ── Build edges list ──────────────────────────────────────────
+    _edges = [];
+    for (var ii = 0; ii < n; ii++) {
+      adj[ii].forEach(function (jj) {
+        if (jj > ii) _edges.push({ a: ii, b: jj });
+      });
+    }
+
+    // ── Sort nodes by degree (Welsh-Powell) ───────────────────────
+    var degrees = adj.map(function(a){ return a.length; });
+    var order   = classes.map(function(_, i){ return i; });
+    order.sort(function(a, b){ return degrees[b] - degrees[a]; });
+
+    // ── Layout nodes in ellipse ───────────────────────────────────
+    var cx = W / 2, cy = H / 2;
+    var rx = W * 0.37, ry = H * 0.36;
+    _nodes = classes.map(function (cls, i) {
+      var rank  = order.indexOf(i);
+      var angle = (2 * Math.PI * rank / n) - Math.PI / 2;
+      var color = PALETTE[cls.color % PALETTE.length];
+      var slot  = slots[cls.assignedSlot] || { label: '?' };
+      return {
+        x:      cx + rx * Math.cos(angle),
+        y:      cy + ry * Math.sin(angle),
+        r:      Math.max(18, Math.min(28, 400 / n)),
+        color:  color,
+        label:  cls.subject.substring(0,4) + '/' + cls.group,
+        cls:    cls,
+        slot:   slot,
+        degree: degrees[i],
+        adj:    adj[i]
+      };
+    });
+
+    // ── Initial draw ──────────────────────────────────────────────
+    draw();
+
+    // ── Render legend ─────────────────────────────────────────────
+    renderGraphLegend(data);
+
+    // ── Hover interaction ─────────────────────────────────────────
+    _canvas.onmousemove = function(e) {
+      var rect = _canvas.getBoundingClientRect();
+      var mx   = (e.clientX - rect.left) * (_canvas.width  / rect.width);
+      var my   = (e.clientY - rect.top)  * (_canvas.height / rect.height);
+      var hit  = null;
+      _nodes.forEach(function(nd, i) {
+        var dx = mx - nd.x, dy = my - nd.y;
+        if (Math.sqrt(dx*dx + dy*dy) <= nd.r) hit = i;
+      });
+      if (hit !== _hoveredNode) {
+        _hoveredNode = hit;
+        draw();
+      }
+
+      if (hit !== null) {
+        window.showTooltip && window.showTooltip(e, classes[hit].id);
+      } else {
+        window.hideTooltip && window.hideTooltip();
+      }
+    };
+    _canvas.onmouseleave = function() {
+      _hoveredNode = null;
+      draw();
+      window.hideTooltip && window.hideTooltip();
+    };
+  };
+
+  function draw() {
+    if (!_ctx || !_canvas) return;
+    var W = _canvas.width, H = _canvas.height;
+    _ctx.clearRect(0, 0, W, H);
+
+    // Background
+    _ctx.fillStyle = '#1a2035';
+    _ctx.fillRect(0, 0, W, H);
+
+    // Draw edges
+    _edges.forEach(function(e) {
+      var na = _nodes[e.a], nb = _nodes[e.b];
+      var isAdj = _hoveredNode !== null && (e.a === _hoveredNode || e.b === _hoveredNode);
+      var isHov = _hoveredNode !== null;
+
+      _ctx.beginPath();
+      _ctx.moveTo(na.x, na.y);
+      _ctx.lineTo(nb.x, nb.y);
+
+      if (!isHov) {
+        _ctx.strokeStyle = 'rgba(96,165,250,.15)';
+        _ctx.lineWidth   = 1;
+      } else if (isAdj) {
+        _ctx.strokeStyle = 'rgba(248,113,113,.85)';
+        _ctx.lineWidth   = 2;
+      } else {
+        _ctx.strokeStyle = 'rgba(96,165,250,.05)';
+        _ctx.lineWidth   = 0.5;
+      }
+      _ctx.stroke();
+    });
+
+    // Draw nodes
+    _nodes.forEach(function(nd, i) {
+      var isHovered  = i === _hoveredNode;
+      var isNeighbor = _hoveredNode !== null && nd.adj.indexOf(_hoveredNode) !== -1;
+      var isDimmed   = _hoveredNode !== null && !isHovered && !isNeighbor;
+      var alpha      = isDimmed ? 0.3 : 1;
+
+      _ctx.globalAlpha = alpha;
+
+      // Outer glow for hovered
+      if (isHovered) {
+        _ctx.beginPath();
+        _ctx.arc(nd.x, nd.y, nd.r + 8, 0, Math.PI * 2);
+        _ctx.fillStyle = nd.color + '33';
+        _ctx.fill();
+      }
+
+      // Node circle
+      _ctx.beginPath();
+      _ctx.arc(nd.x, nd.y, nd.r, 0, Math.PI * 2);
+      _ctx.fillStyle = nd.color + (isDimmed ? '55' : 'cc');
+      _ctx.fill();
+      _ctx.strokeStyle = isHovered ? '#fff' : isNeighbor ? '#f87171' : nd.color;
+      _ctx.lineWidth   = isHovered ? 2.5 : 1.5;
+      _ctx.stroke();
+
+      // Degree badge for top-3 nodes
+      if (nd.degree > 0 && (isHovered || isNeighbor)) {
+        _ctx.beginPath();
+        _ctx.arc(nd.x + nd.r - 4, nd.y - nd.r + 4, 7, 0, Math.PI * 2);
+        _ctx.fillStyle = '#ef4444';
+        _ctx.fill();
+        _ctx.fillStyle = '#fff';
+        _ctx.font = 'bold 7px sans-serif';
+        _ctx.textAlign = 'center';
+        _ctx.textBaseline = 'middle';
+        _ctx.fillText(nd.degree, nd.x + nd.r - 4, nd.y - nd.r + 4);
+      }
+
+      // Label
+      _ctx.fillStyle = isDimmed ? '#888' : '#fff';
+      _ctx.font      = (isHovered ? 'bold ' : '') + Math.max(9, nd.r * 0.5) + 'px "Segoe UI",sans-serif';
+      _ctx.textAlign    = 'center';
+      _ctx.textBaseline = 'middle';
+      _ctx.fillText(nd.label, nd.x, nd.y);
+
+      _ctx.globalAlpha = 1;
+    });
+
+    // Center info if hovering
+    if (_hoveredNode !== null) {
+      var nd = _nodes[_hoveredNode];
+      _ctx.fillStyle = 'rgba(15,17,23,.8)';
+      _ctx.beginPath();
+      _ctx.roundRect(W/2 - 100, H - 46, 200, 34, 8);
+      _ctx.fill();
+      _ctx.fillStyle = '#94a3b8';
+      _ctx.font = '11px "Segoe UI",sans-serif';
+      _ctx.textAlign = 'center';
+      _ctx.textBaseline = 'middle';
+      _ctx.fillText(nd.cls.subject + ' · Group ' + nd.cls.group + ' · ' + nd.degree + ' conflict(s)', W/2, H - 29);
+    }
+  }
+
+  function drawEmpty() {
+    var W = _canvas.width  || 400;
+    var H = _canvas.height || 300;
+    _canvas.width = W; _canvas.height = H;
+    _ctx.fillStyle = '#1a2035';
+    _ctx.fillRect(0,0,W,H);
+    _ctx.fillStyle = '#64748b';
+    _ctx.font = '14px "Segoe UI",sans-serif';
+    _ctx.textAlign = 'center';
+    _ctx.textBaseline = 'middle';
+    _ctx.fillText('No data — load timetable.json', W/2, H/2);
+  }
+
+  function renderGraphLegend(data) {
+    var legendEl = document.getElementById('graph-legend');
+    if (!legendEl) return;
+
+    var usedColors = {};
+    (data.classes || []).forEach(function(cls) {
+      var c = PALETTE[cls.color % PALETTE.length];
+      if (!usedColors[c]) usedColors[c] = 'Color #' + cls.color;
+    });
+
+    var html = '<h4>Slot Colors</h4>';
+    Object.keys(usedColors).slice(0, 10).forEach(function(c) {
+      html += '<div class="graph-legend-item">' +
+                '<div class="legend-color-dot" style="background:' + c + '"></div>' +
+                '<span>' + usedColors[c] + '</span>' +
+              '</div>';
+    });
+    html += '<hr style="border-color:var(--border);margin:10px 0">';
+    html += '<div style="font-size:.7rem;color:var(--text-muted);line-height:1.5">' +
+              '<strong style="color:var(--text-secondary)">Edge</strong> = conflict<br>' +
+              '<strong style="color:var(--red)">Red edge</strong> = hovered conflicts<br>' +
+              '<strong style="color:var(--text-secondary)">Sorted</strong> by degree (Welsh-Powell)' +
+            '</div>';
+
+    legendEl.innerHTML = html;
+  }
+
+}());
+</script>
+<script>/* ================================================================
+   flow.js — Max-Flow / Bipartite Matching SVG Renderer
+   ================================================================ */
+
+(function () {
+  'use strict';
+
+  window.renderFlowNetwork = function renderFlowNetwork() {
+    var APP = window.APP;
+    var container = document.getElementById('flow-diagram');
+    var complexityEl = document.getElementById('flow-complexity');
+    if (!container) return;
+
+    if (!APP || !APP.data) {
+      container.innerHTML = '<p style="text-align:center;padding:40px;color:var(--text-muted)">No data loaded.</p>';
+      return;
+    }
+
+    var data    = APP.data;
+    var classes = data.classes || [];
+    var slots   = data.slots   || [];
+    var rooms   = data.rooms   || [];
+
+    // ── Determine affected and available nodes ─────────────────────
+    var changedIds = APP.changedIds;
+    var recovData  = APP.recoveryData;
+
+    var affectedClasses = classes.filter(function(c){ return changedIds.has(c.id); });
+    if (affectedClasses.length === 0) {
+      // Show all if no disruption simulated
+      affectedClasses = classes.slice(0, Math.min(6, classes.length));
+    }
+    var showAffected = affectedClasses.slice(0, 6);
+    var moreAffected = affectedClasses.length > 6;
+
+    // Build (slot,room) pair candidates
+    var pairs = [];
+    var usedSlots = new Set(classes.map(function(c){ return c.assignedSlot; }));
+    var pairCount = 0;
+    outerLoop:
+    for (var ri = 0; ri < rooms.length && pairCount < 6; ri++) {
+      if (!rooms[ri].available) continue;
+      for (var si = 0; si < slots.length && pairCount < 6; si++) {
+        pairs.push({ slot: slots[si], room: rooms[ri] });
+        pairCount++;
+      }
+    }
+    var showPairs = pairs.slice(0, 6);
+
+    // ── SVG dimensions ────────────────────────────────────────────
+    var W   = Math.min(container.clientWidth || 900, 920);
+    var H   = Math.max(380, showAffected.length * 60 + 80);
+
+    // Column x positions
+    var xSrc   = 80;
+    var xClass = 240;
+    var xPair  = W - 240;
+    var xSink  = W - 80;
+
+    // Node y positions
+    var classYs = distributeY(showAffected.length, H);
+    var pairYs  = distributeY(showPairs.length,   H);
+
+    // Source / Sink y
+    var srcY  = H / 2;
+    var sinkY = H / 2;
+
+    // Determine matched pairs (use recovery changes, or greedy assignment)
+    var matchedClassIds = new Set();
+    var matchedPairIdxs = new Set();
+    var edges = [];
+
+    // Source → class edges
+    showAffected.forEach(function(cls, ci) {
+      edges.push({ x1: xSrc, y1: srcY, x2: xClass, y2: classYs[ci], type: 'source' });
+    });
+
+    // Class → pair edges (greedy matching)
+    showAffected.forEach(function(cls, ci) {
+      showPairs.forEach(function(pair, pi) {
+        var isMatched = !matchedClassIds.has(ci) && !matchedPairIdxs.has(pi);
+        if (isMatched) {
+          matchedClassIds.add(ci);
+          matchedPairIdxs.add(pi);
+          edges.push({ x1: xClass, y1: classYs[ci], x2: xPair, y2: pairYs[pi], type: 'matched' });
+        } else if (!matchedClassIds.has(ci)) {
+          // Only push unmatched if we haven't yet matched this class
+        }
+      });
+    });
+
+    // Also add some unmatched class→pair edges for visual richness
+    showAffected.forEach(function(cls, ci) {
+      if (!matchedClassIds.has(ci)) {
+        // push unmatched to first available pair
+        edges.push({ x1: xClass, y1: classYs[ci], x2: xPair, y2: pairYs[0], type: 'unmatched' });
+      }
+    });
+
+    // Pair → sink edges
+    showPairs.forEach(function(pair, pi) {
+      var type = matchedPairIdxs.has(pi) ? 'matched' : 'unmatched';
+      edges.push({ x1: xPair, y1: pairYs[pi], x2: xSink, y2: sinkY, type: type });
+    });
+
+    // ── Build SVG ─────────────────────────────────────────────────
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" style="font-family:\'Segoe UI\',sans-serif">';
+
+    // Defs: arrowheads
+    svg += '<defs>' +
+      arrow('arrowGreen', '#10b981') +
+      arrow('arrowGrey',  '#4b5563') +
+      arrow('arrowBlue',  '#60a5fa') +
+    '</defs>';
+
+    // Column labels
+    svg += svgText(xSrc,   18, 'SOURCE',  '#60a5fa', 'bold 11px') +
+           svgText(xClass, 18, 'CLASSES', '#a78bfa', 'bold 11px') +
+           svgText(xPair,  18, 'SLOTS × ROOMS', '#34d399', 'bold 11px') +
+           svgText(xSink,  18, 'SINK',    '#60a5fa', 'bold 11px');
+
+    // Draw edges first (behind nodes)
+    edges.forEach(function(e) {
+      var col, markerId;
+      if (e.type === 'matched') { col = '#10b981'; markerId = 'arrowGreen'; }
+      else if (e.type === 'source') { col = '#60a5fa'; markerId = 'arrowBlue'; }
+      else { col = '#374151'; markerId = 'arrowGrey'; }
+
+      var dash  = e.type === 'unmatched' ? ' stroke-dasharray="5,3"' : '';
+      var width = e.type === 'matched' ? '2.5' : '1.5';
+
+      // Bezier curve
+      var cx1 = e.x1 + (e.x2 - e.x1) * 0.5;
+      var cx2 = cx1;
+      svg += '<path d="M ' + e.x1 + ' ' + e.y1 +
+             ' C ' + cx1 + ' ' + e.y1 + ', ' + cx2 + ' ' + e.y2 + ', ' + e.x2 + ' ' + e.y2 + '"' +
+             ' stroke="' + col + '" stroke-width="' + width + '"' + dash +
+             ' fill="none" marker-end="url(#' + markerId + ')"' +
+             ' opacity="' + (e.type === 'unmatched' ? '0.4' : '0.9') + '"/>';
+
+      // Capacity label midpoint
+      var mx = (e.x1 + e.x2) / 2;
+      var my = (e.y1 + e.y2) / 2 - 6;
+      if (e.type !== 'unmatched') {
+        svg += '<text x="' + mx + '" y="' + my + '" fill="' + col + '" font-size="10" text-anchor="middle" opacity="0.7">cap=1,f=' + (e.type === 'matched' ? 1 : 0) + '</text>';
+      }
+    });
+
+    // Source node
+    svg += nodeRect(xSrc - 30, srcY - 18, 60, 36, '#1e3a5f', '#60a5fa', 'SOURCE');
+
+    // Class nodes
+    showAffected.forEach(function(cls, ci) {
+      var label = cls.subject.substring(0,5) + '/' + cls.group;
+      var col   = matchedClassIds.has(ci) ? '#10b981' : '#8b5cf6';
+      var bg    = matchedClassIds.has(ci) ? '#064e3b' : '#2d1b4e';
+      svg += nodeRect(xClass - 42, classYs[ci] - 18, 84, 36, bg, col, label);
+    });
+
+    if (moreAffected) {
+      svg += svgText(xClass, classYs[classYs.length-1] + 30, '... more', '#64748b', '11px');
+    }
+
+    // Pair nodes
+    showPairs.forEach(function(pair, pi) {
+      var label  = (pair.slot.time || '?') + '/' + (pair.room.name || '?').substring(0,7);
+      var col    = matchedPairIdxs.has(pi) ? '#10b981' : '#374151';
+      var bg     = matchedPairIdxs.has(pi) ? '#064e3b' : '#1a2035';
+      svg += nodeRect(xPair - 52, pairYs[pi] - 18, 104, 36, bg, col, label);
+    });
+
+    // Sink node
+    svg += nodeRect(xSink - 30, sinkY - 18, 60, 36, '#1e3a5f', '#60a5fa', 'SINK');
+
+    // Flow summary
+    var flowVal = matchedClassIds.size;
+    svg += '<rect x="' + (W/2 - 110) + '" y="' + (H - 40) + '" width="220" height="26" rx="6" fill="#0d1525" stroke="#2d3f5c"/>';
+    svg += '<text x="' + W/2 + '" y="' + (H - 22) + '" fill="#94a3b8" font-size="11" text-anchor="middle">' +
+           'Max Flow = ' + flowVal + '  |  Matched: ' + flowVal + '/' + showAffected.length + ' classes' +
+           '</text>';
+
+    svg += '</svg>';
+    container.innerHTML = svg;
+
+    // Complexity note
+    if (complexityEl) {
+      var V = 2 + showAffected.length + showPairs.length;
+      var E = edges.length;
+      complexityEl.textContent =
+        'Edmonds-Karp complexity: O(V · E²) where V = ' + V + ' nodes, E = ' + E + ' edges. ' +
+        'Each BFS augmentation runs in O(E); at most O(V·E) augmentations.';
+    }
+  };
+
+  // ── Helpers ───────────────────────────────────────────────────────
+  function distributeY(count, H) {
+    if (count === 0) return [];
+    var margin = 60;
+    var spacing = (H - 2 * margin) / Math.max(count - 1, 1);
+    return Array.from({length: count}, function(_, i) {
+      return count === 1 ? H / 2 : margin + i * spacing;
+    });
+  }
+
+  function arrow(id, color) {
+    return '<marker id="' + id + '" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">' +
+             '<path d="M0,0 L0,6 L8,3 z" fill="' + color + '"/>' +
+           '</marker>';
+  }
+
+  function nodeRect(x, y, w, h, bg, stroke, label) {
+    return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="7"' +
+           ' fill="' + bg + '" stroke="' + stroke + '" stroke-width="1.5"/>' +
+           '<text x="' + (x + w/2) + '" y="' + (y + h/2 + 4) + '"' +
+           ' fill="#e2e8f0" font-size="10" font-weight="600" text-anchor="middle">' +
+           escSVG(label) + '</text>';
+  }
+
+  function svgText(x, y, text, fill, font) {
+    return '<text x="' + x + '" y="' + y + '" fill="' + fill + '"' +
+           ' font-size="' + (font || '11px') + '" text-anchor="middle">' + escSVG(text) + '</text>';
+  }
+
+  function escSVG(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+}());
+</script>
+<script>// ─────────────────────────────────────────────────────────────
+//  algorithms.js  —  Algorithm Cards Renderer
+//  Targets: #algo-grid  |  Uses CSS: .algo-card, .algo-grid etc.
+// ─────────────────────────────────────────────────────────────
+
+window.renderAlgorithms = function () {
+    var grid = document.getElementById('algo-grid');
+    if (!grid) return;
+
+    var ALGOS = [
+        {
+            icon:'🏗️', name:'Graph Representation',
+            tag:'Unit II — Graph Theory', color:'#3b82f6',
+            time:'O(n²)', space:'O(V+E)',
+            desc:'Timetable conflicts are modelled as an undirected adjacency-list graph. Vertex = class, edge = conflict (same student group OR same teacher). Built in <code>conflict_graph.cpp</code>.',
+            pseudo:['for i in classes:', '  for j>i in classes:', '    if sameGroup(i,j) or sameTeacher(i,j):', '      adj[i]+=j; adj[j]+=i']
+        },
+        {
+            icon:'🌐', name:'BFS — Disruption Scan',
+            tag:'Unit II — BFS Traversal', color:'#06b6d4',
+            time:'O(V+E)', space:'O(V)',
+            desc:'After a resource becomes unavailable, BFS fans out from the first affected class level-by-level through the conflict graph to find every class that may be impacted.',
+            pseudo:['Q.push(start); visited[start]=true','while Q not empty:','  u=Q.pop(); result+=u','  for v in adj[u]:','    if !visited[v]: Q.push(v)']
+        },
+        {
+            icon:'🔍', name:'DFS — Depth Traversal',
+            tag:'Unit II — DFS Traversal', color:'#8b5cf6',
+            time:'O(V+E)', space:'O(V)',
+            desc:'DFS uses an explicit stack to traverse the conflict graph depth-first. Alongside BFS it demonstrates both major graph traversal strategies on the same structure.',
+            pseudo:['S.push(start)','while S not empty:','  u=S.pop()','  for v in adj[u]:','    if !visited[v]: S.push(v)']
+        },
+        {
+            icon:'🎨', name:'Greedy Graph Coloring',
+            tag:'Unit III — Greedy Algorithm', color:'#10b981',
+            time:'O(n·S·R)', space:'O(n)',
+            desc:'Welsh-Powell heuristic: sort classes by degree descending, then greedily assign each the smallest valid (slot, room) pair not used by any conflicting neighbour. Polynomial-time approximation.',
+            pseudo:['sort classes by degree desc','for c in sorted_classes:','  for each slot s, room r:','    if isValid(c,s,r):','      assign(c,s,r); break']
+        },
+        {
+            icon:'↩️', name:'Backtracking Solver',
+            tag:'Unit III — Backtracking', color:'#f59e0b',
+            time:'O(n!·S·R) worst', space:'O(n)',
+            desc:'Fallback when greedy fails. Recursively tries all (slot, room) combinations with constraint pruning. Guarantees a valid timetable if one exists, at exponential worst-case cost.',
+            pseudo:['backtrack(idx):','  if idx==n: return true','  for each (slot s, room r):','    if isValid: assign(c,s,r)','    if backtrack(idx+1): return true','    unassign(c)  // backtrack']
+        },
+        {
+            icon:'📊', name:'Fragility Analysis',
+            tag:'Unit I — Asymptotic Analysis', color:'#ec4899',
+            time:'O(n·S·R)', space:'O(1)',
+            desc:'Pre-disruption risk scoring: temporarily unassign each class and count all valid (slot, room) alternatives. Low count = fragile. Identifies at-risk assignments before any disruption occurs.',
+            pseudo:['for each class c:','  unassign(c)','  count = 0','  for each (slot s, room r):','    if isValid(c,s,r): count++','  c.fragility=count; reassign(c)']
+        },
+        {
+            icon:'⚖️', name:'Bipartite Matching',
+            tag:'Unit V — Matching', color:'#14b8a6',
+            time:'O(V·E)', space:'O(V+E)',
+            desc:'Recovery: affected classes on left, valid (slot, room) pairs on right. Maximum bipartite matching finds the largest conflict-free reassignment set.',
+            pseudo:['L = {affected classes}','R = {available (slot,room) pairs}','for c in L:','  for p in R: if compatible(c,p):','    addEdge(c,p,cap=1)','maxMatching(L,R)']
+        },
+        {
+            icon:'🌊', name:'Max-Flow — Edmonds-Karp',
+            tag:'Unit V — Network Flow', color:'#f97316',
+            time:'O(V·E²)', space:'O(V²)',
+            desc:'Matching solved as flow: Source→classes (cap 1)→(slot,room) pairs (cap 1)→Sink (cap 1). BFS-based Ford-Fulkerson (Edmonds-Karp) finds maximum flow = maximum classes recovered.',
+            pseudo:['while BFS finds s→t path:','  flow = min cap on path','  for edge (u,v) on path:','    cap[u][v] -= flow','    cap[v][u] += flow','  totalFlow += flow']
+        },
+        {
+            icon:'🧮', name:'NP-Completeness',
+            tag:'Unit VI — Complexity Theory', color:'#dc2626',
+            time:'NP-Complete', space:'—',
+            desc:'Optimal graph k-coloring is NP-Complete (3-SAT ≤p 3-Coloring ≤p k-Coloring). Optimal timetabling is therefore NP-Hard. This project uses greedy + backtracking polynomial-time heuristics in practice.',
+            pseudo:['3-SAT ≤p Graph-3-Colorability','k-Coloring ≡ Timetable Scheduling','⟹ Optimal scheduling is NP-Hard','⟹ Greedy: poly-time approximation','⟹ Backtracking: exact, exponential']
+        }
+    ];
+
+    var html = '';
+    ALGOS.forEach(function(a) {
+        var pseudoLines = a.pseudo.map(function(line){
+            return '<div class="algo-pseudo-line">' +
+                   line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') +
+                   '</div>';
+        }).join('');
+
+        html +=
+            '<div class="algo-card" style="border-top:3px solid ' + a.color + '">' +
+              '<div class="algo-card-header">' +
+                '<span class="algo-icon">' + a.icon + '</span>' +
+                '<div class="algo-card-title">' +
+                  '<h3>' + a.name + '</h3>' +
+                  '<span class="algo-tag">' + a.tag + '</span>' +
+                '</div>' +
+              '</div>' +
+              '<p class="algo-desc">' + a.desc + '</p>' +
+              '<div class="algo-pseudo">' + pseudoLines + '</div>' +
+              '<div class="algo-complexity">' +
+                '<span class="badge badge-stable" style="background:#1e3a5f;color:#93c5fd;margin-right:6px">⏱ ' + a.time  + '</span>' +
+                '<span class="badge badge-stable" style="background:#1a2f1f;color:#6ee7b7">💾 ' + a.space + '</span>' +
+              '</div>' +
+            '</div>';
+    });
+
+    grid.innerHTML = html;
+};
+</script>
+<script>// ─────────────────────────────────────────────────────────────
+//  recovery.js  —  Recovery Panel Renderer
+//  Uses CSS classes from style.css
+// ─────────────────────────────────────────────────────────────
+
+window.renderRecovery = function () {
+    var d = window.APP.data;
+    var rec = d && d.recovery ? d.recovery : window.APP.recoveryData;
+
+    if (!rec) {
+        var logEl0 = document.getElementById('recovery-log');
+        if (logEl0) logEl0.innerHTML =
+            '<span style="color:#64748b;font-style:italic">No recovery data. Run the C++ engine then click ↺ Reload Data.</span>';
+        return;
+    }
+
+    var classes = d ? d.classes : [];
+    var slots = d ? d.slots : [];
+    var rooms = d ? d.rooms : [];
+    var unresolved = rec.affectedCount - rec.reassignedCount;
+
+    // ── Banner ─────────────────────────────────────────────
+    var bannerEl = document.getElementById('recovery-banner');
+    if (bannerEl) {
+        bannerEl.className = 'recovery-banner ' + (rec.success ? 'success' : 'failure');
+        bannerEl.innerHTML = rec.success
+            ? '✅ <strong>Full Recovery</strong> — all ' + rec.affectedCount + ' affected class' +
+            (rec.affectedCount !== 1 ? 'es' : '') + ' successfully reassigned.'
+            : '⚠️ <strong>Partial Recovery</strong> — ' + rec.reassignedCount + '/' +
+            rec.affectedCount + ' reassigned; ' + unresolved + ' unresolved.';
+    }
+
+    // ── Pipeline ───────────────────────────────────────────
+    var pipeEl = document.getElementById('recovery-pipeline');
+    if (pipeEl) {
+        pipeEl.innerHTML =
+            '<div class="pipeline-step">' +
+            mkNode('⚡', 'Disruption', '—', 'pn-active') +
+            mkArrow() +
+            mkNode('🌐', 'BFS Scan', 'O(V+E)', 'pn-active') +
+            mkArrow() +
+            mkNode('⚖️', 'Bipartite', 'Match', 'pn-active') +
+            mkArrow() +
+            mkNode('🌊', 'Max-Flow', 'O(V·E²)', 'pn-active') +
+            mkArrow() +
+            mkNode(rec.success ? '✅' : '⚠️', rec.success ? 'Recovered' : 'Partial', rec.reassignedCount + '/' + rec.affectedCount, rec.success ? 'pn-success' : 'pn-active') +
+            '</div>';
+    }
+
+    // ── Stats row ──────────────────────────────────────────
+    var statsEl = document.getElementById('recovery-stats-row');
+    if (statsEl) {
+        statsEl.innerHTML =
+            '<div style="display:flex;gap:12px;flex-wrap:wrap;margin:12px 0">' +
+            mkStatCard(rec.affectedCount, '#f87171', 'Affected') +
+            mkStatCard(rec.reassignedCount, '#34d399', 'Reassigned') +
+            mkStatCard(unresolved, unresolved > 0 ? '#fbbf24' : '#34d399', 'Unresolved') +
+            '</div>';
+    }
+
+    // ── Log ────────────────────────────────────────────────
+    var logEl = document.getElementById('recovery-log');
+    if (logEl) logEl.textContent = rec.log || 'No log available.';
+
+    // ── Changes table ──────────────────────────────────────
+    var tbody = document.getElementById('recovery-tbody');
+    if (tbody) {
+        if (!rec.changes || rec.changes.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#64748b;padding:20px">No reassignments.</td></tr>';
+        } else {
+            var rows = '';
+            rec.changes.forEach(function (ch) {
+                var cls = classes.find(function (c) { return c.id === ch.classId; });
+                var slot = slots[ch.newSlot] ? slots[ch.newSlot].label : 'Slot ' + ch.newSlot;
+                var room = rooms[ch.newRoom] ? rooms[ch.newRoom].name : 'Room ' + ch.newRoom;
+                rows +=
+                    '<tr style="background:#1c1010">' +
+                    '<td style="text-align:center">' + ch.classId + '</td>' +
+                    '<td><strong>' + (cls ? cls.subject : '?') + '</strong>' +
+                    (cls && cls.needsLab ? ' <span class="badge badge-stable" style="background:#064e3b;color:#6ee7b7;font-size:.68rem">LAB</span>' : '') +
+                    '<br><span style="font-size:.72rem;color:#64748b">Grp ' + (cls ? cls.group : '?') + '</span></td>' +
+                    '<td style="font-family:monospace;color:#34d399">' + slot + '</td>' +
+                    '<td style="font-family:monospace;color:#34d399">' + room + '</td>' +
+                    '</tr>';
+            });
+            tbody.innerHTML = rows;
+        }
+    }
+};
+
+function mkNode(icon, label, sub, modCls) {
+    return '<div class="pipeline-node ' + modCls + '">' +
+        '<div class="pn-icon">' + icon + '</div>' +
+        '<div class="pn-label">' + label + '</div>' +
+        '<div class="pn-sub">' + sub + '</div>' +
+        '</div>';
+}
+function mkArrow() { return '<div class="pipeline-arrow">→</div>'; }
+function mkStatCard(val, color, label) {
+    return '<div class="recovery-stat-card" style="flex:1;min-width:100px">' +
+        '<div class="rsv" style="color:' + color + '">' + val + '</div>' +
+        '<div class="rsl">' + label + '</div>' +
+        '</div>';
+}
+</script>
+</body>
+</html>
