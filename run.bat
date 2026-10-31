@@ -1,41 +1,15 @@
 @echo off
-title Adaptive Timetable Optimization Framework
-color 0A
+title Adaptive Timetable Framework
 
 echo.
-echo  ====================================================
-echo   Adaptive Timetable Optimization ^& Recovery System
-echo   DAA Final Project
-echo  ====================================================
+echo  =========================================
+echo   Adaptive Timetable Optimization ^& Recovery
+echo  =========================================
 echo.
 
-REM ─── Check g++ ───
-where g++ >nul 2>&1
-if errorlevel 1 (
-    echo  [ERROR] g++ not found. Please install MinGW and add it to PATH.
-    echo          Download: https://winlibs.com/
-    pause
-    exit /b 1
-)
-
-REM ─── Create folders ───
-if not exist build   mkdir build
-if not exist output  mkdir output
-
-REM ─── Choose disruption ───
-set DTYPE=room
-set DID=0
-
-if not "%~1"=="" set DTYPE=%~1
-if not "%~2"=="" set DID=%~2
-
-echo  Disruption type : %DTYPE%
-echo  Disruption ID   : %DID%
-echo.
-
-REM ─── Compile ───
-echo  [1/3] Compiling...
-g++ -std=c++14 -O2 -Isrc -o build\timetable.exe ^
+:: ── Step 1: Compile ─────────────────────────────────────────────────
+echo [1/3] Compiling C++ backend...
+g++ -std=c++14 -O2 -Isrc ^
     src\data_init.cpp ^
     src\conflict_graph.cpp ^
     src\greedy_coloring.cpp ^
@@ -47,33 +21,23 @@ g++ -std=c++14 -O2 -Isrc -o build\timetable.exe ^
     src\recovery.cpp ^
     src\json_writer.cpp ^
     src\complexity.cpp ^
-    src\main.cpp
+    src\main.cpp ^
+    -o build\timetable.exe
 
 if errorlevel 1 (
-    echo.
-    echo  [ERROR] Compilation failed. See errors above.
+    echo  [ERROR] Compilation failed. Check g++ is in PATH.
     pause
     exit /b 1
 )
-echo         Compiled successfully.
+echo  Compiled successfully.
 echo.
 
-REM ─── Run ───
-echo  [2/3] Running engine...
-echo  ─────────────────────────────────────────────────
-build\timetable.exe %DTYPE% %DID%
-echo  ─────────────────────────────────────────────────
+:: ── Step 2: Run backend (room 0 disruption demo) ─────────────────────
+echo [2/3] Running timetable engine...
+build\timetable.exe room 0
 echo.
 
-REM ─── Open browser ───
-echo  [3/3] Opening frontend...
-if exist frontend\index.html (
-    start "" frontend\index.html
-    echo         Frontend opened in browser.
-) else (
-    echo  [WARN] frontend\index.html not found.
-)
-echo.
-echo  Done! Press any key to exit.
-pause >nul
-
+:: ── Step 3: Start server and open browser ────────────────────────────
+echo [3/3] Starting web server at http://localhost:3000 ...
+start "" http://localhost:3000
+node server.js

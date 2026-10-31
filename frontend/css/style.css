@@ -111,7 +111,31 @@ code {
   color: var(--text-muted);
   font-weight: 400;
 }
-.header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+/* ── Disruption Panel ────────────────────────────────────────── */
+.disruption-panel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--yellow-light);
+  border: 1px solid var(--yellow-muted);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+}
+.disrupt-select {
+  border: 1px solid var(--yellow-muted);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--text-primary);
+  font-size: .78rem;
+  font-family: var(--font);
+  padding: 4px 8px;
+  cursor: pointer;
+  outline: none;
+}
+.disrupt-select:focus { border-color: var(--yellow); }
+
 
 /* ── Buttons ─────────────────────────────────────────────────  */
 .btn {

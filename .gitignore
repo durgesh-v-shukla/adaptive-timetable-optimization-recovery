@@ -4,6 +4,9 @@ build/
 *.o
 *.obj
 
+# Generated output (created at runtime by timetable.exe)
+output/timetable.json
+
 # OS artifacts
 .DS_Store
 Thumbs.db
@@ -12,3 +15,4 @@ Thumbs.db
 .vscode/
 *.swp
 *~
+

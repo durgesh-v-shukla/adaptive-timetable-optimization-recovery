@@ -51,7 +51,7 @@
     hideError();
 
     try {
-      var response = await fetch('../output/timetable.json?_=' + Date.now());
+      var response = await fetch('/output/timetable.json?_=' + Date.now());
       if (!response.ok) throw new Error('HTTP ' + response.status + ': ' + response.statusText);
       var json = await response.json();
       APP.data         = json;
@@ -76,6 +76,34 @@
     }
   }
   window.loadData = loadData;
+
+  // ── Live Disruption (calls /api/run on the Node server) ──────────
+  async function runDisruption() {
+    var typeEl = document.getElementById('disrupt-type');
+    var idEl   = document.getElementById('disrupt-id');
+    var type   = typeEl ? typeEl.value : 'room';
+    var id     = idEl   ? idEl.value   : '0';
+
+    showLoading(true);
+    hideError();
+    try {
+      var resp = await fetch('/api/run?type=' + type + '&id=' + id, { method: 'POST' });
+      var body = await resp.json();
+      if (!resp.ok || !body.ok) throw new Error(body.error || 'Backend error');
+      APP.data         = body.data;
+      APP.recoveryData = body.data.recovery || null;
+      APP.changedIds   = new Set();
+      if (APP.recoveryData && APP.recoveryData.changes) {
+        APP.recoveryData.changes.forEach(function (c) { APP.changedIds.add(c.classId); });
+      }
+      showLoading(false);
+      render();
+    } catch (err) {
+      showLoading(false);
+      showError('Disruption failed: ' + err.message);
+    }
+  }
+  window.runDisruption = runDisruption;
 
   // ── Demo / Fallback Data  (rich professor demo) ──────────────────
   function loadDemoData() {

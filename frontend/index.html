@@ -30,11 +30,25 @@
         </div>
       </div>
       <div class="header-actions">
-        <button class="btn btn-warning" onclick="window.simulateDisruption && window.simulateDisruption()">
-          ⚡ Simulate Disruption
-        </button>
+        <div class="disruption-panel">
+          <select id="disrupt-type" class="disrupt-select">
+            <option value="room">Room Unavailable</option>
+            <option value="teacher">Teacher Unavailable</option>
+            <option value="slot">Slot Unavailable</option>
+          </select>
+          <select id="disrupt-id" class="disrupt-select">
+            <option value="0">ID 0</option>
+            <option value="1">ID 1</option>
+            <option value="2">ID 2</option>
+            <option value="3">ID 3</option>
+            <option value="4">ID 4</option>
+          </select>
+          <button class="btn btn-warning" onclick="window.runDisruption && window.runDisruption()">
+            ⚡ Run Disruption
+          </button>
+        </div>
         <button class="btn btn-primary" onclick="window.loadData && window.loadData()">
-          ↺ Reload Data
+          ↺ Reload
         </button>
       </div>
     </div>
